@@ -57,7 +57,7 @@ const Bill: React.FC = () => {
         address: '',
         date: getTodayDate(),
         billBy: '',
-        pid: ''
+        billProductId: ''
     });
 
     const [loading, setLoading] = useState(false);
@@ -68,6 +68,7 @@ const Bill: React.FC = () => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [admins, setAdmins] = useState([]);
     const dropdownRef = useRef<HTMLUListElement | null>(null);
+    const [backendServer, setBackendServer] = useState("http://localhost:8080/")
 
 
     // Remove products
@@ -91,7 +92,7 @@ const Bill: React.FC = () => {
 
     const addNewRow = () => {
         const newProduct: Product = {
-            pid: Date.now().toString(), // unique id
+            pid: '',
             name: '',
             price: 0,
             quantity: 1,
@@ -99,7 +100,6 @@ const Bill: React.FC = () => {
         setProducts(prev => [...prev, newProduct]);
     };
 
-    // ✅ Prevent non-numeric input for price & quantity
     const handleNumericInput = (
         e: React.ChangeEvent<HTMLInputElement>,
         id: string,
@@ -135,7 +135,7 @@ const Bill: React.FC = () => {
 
     const handleCustomerAdd = async () => {
         try {
-            const response = await fetch("http://localhost:8080/customer", {
+            const response = await fetch(backendServer+"customer", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -152,7 +152,7 @@ const Bill: React.FC = () => {
         try {
             if (admins.length === 0) {
                 setLoading(true);
-                const response = await fetch("http://localhost:8080/admins");
+                const response = await fetch(backendServer+"admins");
                 const data = await response.json();
                 setAdmins(data);
                 setLoading(false);
@@ -189,9 +189,9 @@ const Bill: React.FC = () => {
             phone: cust.phone,
             email: cust.email,
             address: cust.address,
-            date: getTodayDate(), // <-- default to today's date
+            date: getTodayDate(),
             billBy: cust.billBy,
-            pid: cust.pid
+            billProductId: cust.billProductId
         }
         setCustomer(newCustomer);
         setShowDropdown(false);
@@ -208,7 +208,7 @@ const Bill: React.FC = () => {
         }
 
         const delayDebounce = setTimeout(() => {
-            fetch(`http://localhost:8080/search?name=${searchTerm}`)
+            fetch(backendServer + `search?name=${searchTerm}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setCustomerResults(data);
