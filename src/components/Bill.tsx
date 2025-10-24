@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import '../App.css'
+import {v4 as uuid} from 'uuid';
 
 interface Product {
     pid: string;
@@ -33,22 +34,19 @@ interface Admin {
 }
 
 const Bill: React.FC = () => {
-
-    // Mock products and later must be fetched from DB
-    const initialProducts: Product[] = [
-        { pid: '1', name: 'Product A', price: 100, quantity: 1 },
-        { pid: '2', name: 'Product B', price: 50, quantity: 2 },
-        { pid: '3', name: 'Product C', price: 75, quantity: 1 },
-    ];
-
-    const [products, setProducts] = useState<Product[]>(initialProducts);
+    //TODO: 
+    // if user cliked generate button and the product list with BillProducts will be created
+    // also user will be created.
+    // There is a problem, if after genarate bill i do add another product and again generate bill
+    // Then new user gets genareted and also new BillProducts
+    // I want same user gets updated with that and also same list will be
+    // updated with same BillProduct
 
     const getTodayDate = (): string => {
         const today = new Date();
         return today.toISOString().split('T')[0];
     };
 
-    // Customer details state
     const [customer, setCustomer] = useState<Customer>({
         csid: '',
         name: '',
@@ -60,28 +58,31 @@ const Bill: React.FC = () => {
         billProductId: ''
     });
 
+
+    // Mock products and later must be fetched from DB
+    const initialProducts: Product[] = [
+        { pid: uuid(), name: '', price: 0, quantity: 1 }
+    ];
+
+    const [products, setProducts] = useState<Product[]>(initialProducts);
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [createdBy, setCreatedBy] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [customerResults, setCustomerResults] = useState<Customer[]>([]);
-    const [showDropdown, setShowDropdown] = useState(false);
+    const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+    const [showAdminDropdown, setShowAdminDropdown] = useState(false);
     const [admins, setAdmins] = useState([]);
     const dropdownRef = useRef<HTMLUListElement | null>(null);
-    const [backendServer, setBackendServer] = useState("http://localhost:8080/")
+    const [backendServer] = useState("http://localhost:8080/")
 
-
-    // Remove products
     const removeProduct = (id: string) => {
         setProducts(prev => prev.filter(p => p.pid !== id));
     };
-
-    // Calculate totals
     const subtotal = products.reduce((sum, i) => sum + i.price * i.quantity, 0);
     const tax = subtotal * 0.1;
     const total = subtotal + tax;
 
-    // Handle customer input changes
     const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         if (name === 'name') {
@@ -92,7 +93,7 @@ const Bill: React.FC = () => {
 
     const addNewRow = () => {
         const newProduct: Product = {
-            pid: '',
+            pid: uuid(),
             name: '',
             price: 0,
             quantity: 1,
@@ -105,20 +106,18 @@ const Bill: React.FC = () => {
         id: string,
         field: keyof Product
     ) => {
-        const value = e.target.value;
-        const numericValue = value.replace(/₹\s?/g, '');
+        const rawValue = e.target.value.replace(/₹\s?/g, '');
+        const numericValue = rawValue === '' ? 0 : Number(rawValue);
 
-        // allow only digits or empty string
-        if (/^\d*$/.test(numericValue)) {
-            setProducts((prev) =>
-                prev.map((product) =>
+        if (!isNaN(numericValue)) {
+            setProducts(prev =>
+                prev.map(product =>
                     product.pid === id ? { ...product, [field]: numericValue } : product
                 )
             );
         }
     };
 
-    // ✅ Handle product name separately (normal text)
     const handleNameChange = (id: string, value: string) => {
         setProducts((prev) =>
             prev.map((product) => (product.pid === id ? { ...product, name: value } : product))
@@ -127,20 +126,25 @@ const Bill: React.FC = () => {
 
     const handlePrint = () => {
         setShowModal(false);
-        // Could also open a new window with bill content
         setTimeout(() => {
             window.print();
         }, 500);
     };
 
-    const handleCustomerAdd = async () => {
+    const handleCustomerAdd = async (billProductId: string) => {
         try {
-            const response = await fetch(backendServer+"customer", {
+            const updatedCustomer = {
+                ...customer,
+                csid: customer.csid,
+                billProductId,
+                billBy: createdBy
+            };
+            const response = await fetch(backendServer + "customer", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(customer),
+                body: JSON.stringify(updatedCustomer),
             });
             await response.json();
         } catch (error) {
@@ -152,12 +156,12 @@ const Bill: React.FC = () => {
         try {
             if (admins.length === 0) {
                 setLoading(true);
-                const response = await fetch(backendServer+"admins");
+                const response = await fetch(backendServer + "admins");
                 const data = await response.json();
                 setAdmins(data);
                 setLoading(false);
             }
-            setShowDropdown(true);
+            setShowAdminDropdown(true);
         } catch (error) {
             console.error("Error fetching admins:", error);
             setLoading(false);
@@ -166,21 +170,19 @@ const Bill: React.FC = () => {
 
     const handleSelectAdmin = (admin: Admin) => {
         setCreatedBy(admin.name);
-        setShowDropdown(false);
+        setShowAdminDropdown(false);
     };
 
-    // 🧱 Hide dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-                setShowDropdown(false);
+                setShowAdminDropdown(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Handle click on suggestion
     const autoFillCustomerDetail = (cust: Customer) => {
         setSearchTerm(cust.name);
         const newCustomer: Customer = {
@@ -194,7 +196,7 @@ const Bill: React.FC = () => {
             billProductId: cust.billProductId
         }
         setCustomer(newCustomer);
-        setShowDropdown(false);
+        setShowCustomerDropdown(false);
     };
 
     useEffect(() => {
@@ -203,7 +205,7 @@ const Bill: React.FC = () => {
     useEffect(() => {
         if (searchTerm.length < 2) {
             setCustomerResults([]);
-            setShowDropdown(false);
+            setShowCustomerDropdown(false);
             return;
         }
 
@@ -212,54 +214,54 @@ const Bill: React.FC = () => {
                 .then((res) => res.json())
                 .then((data) => {
                     setCustomerResults(data);
-                    setShowDropdown(true);
+                    setShowCustomerDropdown(true);
                 })
                 .catch((err) => console.error("Search failed", err));
-        }, 400); // Debounce 400ms
+        }, 400);
 
-        return () => clearTimeout(delayDebounce); // Cancel on next keystroke
+        return () => clearTimeout(delayDebounce);
     }, [searchTerm]);
+
+    const handleProductDataAdd = async (): Promise<string | null> => {
+        try {
+            const billProduct: BillProduct = {
+                bpid: '',
+                productList: products,
+                subtotal: subtotal,
+                total: total,
+                tax: tax
+            };
+
+            const response = await fetch(backendServer + "billProduct", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(billProduct),
+            });
+
+            if (!response.ok) throw new Error("Failed to save BillProduct");
+
+            const savedData = await response.json();
+            return savedData.bpid;
+
+        } catch (error) {
+            console.error("Error saving bill product:", error);
+            return null;
+        }
+    };
+
 
     const handleGenerateBill = async () => {
         try {
             setLoading(true);
-            //Before adding user send all the table data first(BillProduct), for that products and the calculations
-            // Once clicked generate bill button the data should be collected
-            // save it to DB and the created bill product id will be used in the add user request to keep reference.
-
-            // handleProductDataAdd();
-
-            // before adding customer, check if that customer is already present
-            // if user enters a name and backend returns the user back and
-            // onclick of that dropdown user, frontend autofills all the user fields
-            // and call backend to update if any changes 
-            // if no value in dropdown, send data without id so that user will get added newly
-            handleCustomerAdd();
-
-            // 🔁 Step 1: First API Call
-            //const firstResponse = await apiCall1(); // e.g., saveBill()
-
-            // Check if response is valid
-            // if (!firstResponse || !firstResponse.billId) {
-            //   throw new Error("First API call failed or invalid response");
-            // }
-
-            //const billId = firstResponse.billId;
-
-            // 🔁 Step 2: Second API Call using billId
-            //const secondResponse = await apiCall2(billId); // e.g., getBillDetails(billId)
-
-            // Optionally check the second response
-            // if (!secondResponse.success) {
-            //   throw new Error("Second API call failed");
-            // }
-
-            // ✅ Show success modal
+            const billProductId = await handleProductDataAdd();
+            if (!billProductId) throw new Error("Failed to save bill product.");
+            handleCustomerAdd(billProductId);
             setShowModal(true);
-
         } catch (error) {
             console.error("Error generating bill:", error);
-            alert("Something went wrong. Please try again.");
+            alert("Something went wrong while generating the bill.");
         } finally {
             setLoading(false);
         }
@@ -278,11 +280,11 @@ const Bill: React.FC = () => {
                         value={customer.name}
                         onChange={handleCustomerChange}
                         onFocus={() => {
-                            if (customerResults.length > 0) setShowDropdown(true);
+                            if (customerResults.length > 0) setShowCustomerDropdown(true);
                         }}
                     />
 
-                    {showDropdown && customerResults.length > 0 && (
+                    {showCustomerDropdown && customerResults.length > 0 && (
                         <ul className="dropdown">
                             {customerResults.map((cust) => (
                                 <li key={cust.csid} onMouseDown={() => {
@@ -410,7 +412,7 @@ const Bill: React.FC = () => {
                             placeholder="Select your name"
                             className="no-style-input"
                         />
-                        {showDropdown && (
+                        {showAdminDropdown && (
                             <ul className="dropdownn">
                                 {loading ? (
                                     <li>Loading...</li>
@@ -441,7 +443,6 @@ const Bill: React.FC = () => {
                     </button>
                 </div>
             </div>
-
 
             {showModal && (
                 <div className="modal-overlay">
