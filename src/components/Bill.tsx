@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import '../App.css'
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
     pid: string;
@@ -35,12 +36,11 @@ interface Admin {
 
 const Bill: React.FC = () => {
     //TODO: 
-    // if user cliked generate button and the product list with BillProducts will be created
-    // also user will be created.
-    // There is a problem, if after genarate bill i do add another product and again generate bill
-    // Then new user gets genareted and also new BillProducts
-    // I want same user gets updated with that and also same list will be
-    // updated with same BillProduct
+
+    // features: 
+    // Low priority: 
+    // Implement product add feature in UI and backend.
+    // Implement new owner add
 
     const getTodayDate = (): string => {
         const today = new Date();
@@ -75,6 +75,7 @@ const Bill: React.FC = () => {
     const [admins, setAdmins] = useState([]);
     const dropdownRef = useRef<HTMLUListElement | null>(null);
     const [backendServer] = useState("http://localhost:8080/")
+    const navigate = useNavigate();
 
     const removeProduct = (id: string) => {
         setProducts(prev => prev.filter(p => p.pid !== id));
@@ -131,12 +132,14 @@ const Bill: React.FC = () => {
         }, 500);
     };
 
-    const handleCustomerAdd = async (billProductId: string) => {
+    const handleCustomerAdd = async (billProductId: string | null) => {
         try {
+            console.log('customer', customer);
+            console.log('billProductId', billProductId);
             const updatedCustomer = {
                 ...customer,
                 csid: customer.csid,
-                billProductId,
+                billProductId: billProductId,
                 billBy: createdBy
             };
             const response = await fetch(backendServer + "customer", {
@@ -146,7 +149,9 @@ const Bill: React.FC = () => {
                 },
                 body: JSON.stringify(updatedCustomer),
             });
-            await response.json();
+            const customerRes = await response.json();
+            setCustomer(customerRes);
+            console.log('customer added response', customerRes);
         } catch (error) {
             console.error("Error saving data: ", error);
         }
@@ -224,8 +229,12 @@ const Bill: React.FC = () => {
 
     const handleProductDataAdd = async (): Promise<string | null> => {
         try {
+            console.log('products', products);
+            console.log('total', total);
+            console.log('customer detail in product before add', customer);
+            const bpid = customer.billProductId ? customer.billProductId : '';
             const billProduct: BillProduct = {
-                bpid: '',
+                bpid: bpid,
                 productList: products,
                 subtotal: subtotal,
                 total: total,
@@ -243,6 +252,7 @@ const Bill: React.FC = () => {
             if (!response.ok) throw new Error("Failed to save BillProduct");
 
             const savedData = await response.json();
+            console.log('bill product added response', savedData);
             return savedData.bpid;
 
         } catch (error) {
@@ -251,11 +261,11 @@ const Bill: React.FC = () => {
         }
     };
 
-
     const handleGenerateBill = async () => {
         try {
             setLoading(true);
             const billProductId = await handleProductDataAdd();
+            console.log('billProductId', billProductId);
             if (!billProductId) throw new Error("Failed to save bill product.");
             handleCustomerAdd(billProductId);
             setShowModal(true);
@@ -267,11 +277,24 @@ const Bill: React.FC = () => {
         }
     };
 
+    const closeButtonHandler = () => {
+        if(customer.name && customer.csid && total !== 0) {
+            handleCustomerAdd(null);
+        }
+        navigate('/');
+
+    }
+
     return (
         <div className="bill-container">
             {/* Customer Details Section */}
             <div className="customer-details">
-                <h5>Customer Bill</h5>
+                <div className='bill-header'>
+                    <h5>🕉️गुरुदत्त मोटर्स & स्पेअर्स🕉️</h5>
+                    <button
+                        className='close-button'
+                        onClick={closeButtonHandler}>Close X</button>
+                </div>
                 <div className="customer-form">
                     <input
                         type="text"
@@ -436,7 +459,7 @@ const Bill: React.FC = () => {
                 <div className="generate-center">
                     <button
                         onClick={handleGenerateBill}
-                        disabled={loading || createdBy.trim() === ""}
+                        disabled={loading || createdBy.trim() === "" || total === 0}
                         className="generate-bill-btn"
                     >
                         {loading ? "Generating..." : "🧾 Generate Bill"}
