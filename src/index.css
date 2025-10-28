@@ -23,9 +23,14 @@ a:hover {
 }
 
 body {
-  margin: 0;
   display: flex;
-  place-items: center;
+  place-items: top;
+  background-image: url('./assets/background-car-low.jpg');
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  height: 100vh;
 }
 
 h1 {

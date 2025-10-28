@@ -66,10 +66,6 @@
   }
 }
 
-.card {
-  padding: 2em;
-}
-
 .read-the-docs {
   color: #888;
 }
@@ -78,7 +74,7 @@
   width: 100%;
   max-width: none;
   margin: 0px;
-  padding: 0px 30px;
+  padding: 0px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -103,16 +99,18 @@
 
 .card-grid {
   display: grid;
-  gap: 5rem;
+  gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .card {
-  background-color: red;
+  background-color: orangered;
   border-radius: 30px;
-  padding: 100px;
+  padding: 20px;
+  margin:10px 70px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .card:hover {
@@ -121,6 +119,10 @@
 
 .card.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.card_image {
+  width: 30%;
 }
 
 .bill-container {

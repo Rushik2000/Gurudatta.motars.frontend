@@ -35,13 +35,6 @@ interface Admin {
 }
 
 const Bill: React.FC = () => {
-    //TODO: 
-
-    // features: 
-    // Low priority: 
-    // Implement product add feature in UI and backend.
-    // Implement new owner add
-
     const getTodayDate = (): string => {
         const today = new Date();
         return today.toISOString().split('T')[0];
@@ -431,7 +424,7 @@ const Bill: React.FC = () => {
                             type="text"
                             value={createdBy}
                             readOnly
-                            onClick={fetchAdmins} // clicking input shows dropdown
+                            onClick={fetchAdmins}
                             placeholder="Select your name"
                             className="no-style-input"
                         />
@@ -443,7 +436,7 @@ const Bill: React.FC = () => {
                                     admins.map((admin: Admin) => (
                                         <li
                                             key={admin.aid}
-                                            onMouseDown={() => handleSelectAdmin(admin)} // use onMouseDown to avoid blur issue
+                                            onMouseDown={() => handleSelectAdmin(admin)}
                                         >
                                             {admin.name}
                                         </li>

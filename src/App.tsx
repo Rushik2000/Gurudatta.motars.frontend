@@ -3,6 +3,7 @@ import Bill from './components/Bill'
 import Dashboard from './components/Dashboard'
 import Customers from './components/Customers'
 import Inventory from './components/Inventory'
+import './index.css'
 
 function App() {
   return (

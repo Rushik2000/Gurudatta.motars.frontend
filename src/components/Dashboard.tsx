@@ -1,6 +1,9 @@
 import Card from '../components/Card'
 import logo from '../assets/Logo.png'
 import '../App.css'
+import bill from '../assets/bill.png'
+import customer from '../assets/customer.png'
+import inventory from '../assets/inventory.png'
 
 const Dashboard = () => {
   return (
@@ -19,9 +22,9 @@ const Dashboard = () => {
       </div>
 
       <div className="card-grid">
-        <Card title="Bill" />
-        <Card title="Customers" />
-        <Card title="Inventory" />
+        <Card title="Bill" imgPath={bill} />
+        <Card title="Inventory" imgPath={inventory} />
+        <Card title="Customers" imgPath={customer} />
       </div>
     </>
   )

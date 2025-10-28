@@ -3,8 +3,9 @@ import '../App.css';
 
 interface Props {
     title: string;
+    imgPath: string
 }
- const Card: React.FC<Props> = ({ title }) => {
+ const Card: React.FC<Props> = ({ title, imgPath }) => {
   const navigate = useNavigate()
 
   const handleClick = (title: string) => {
@@ -15,7 +16,8 @@ interface Props {
 
   return (
     <div className="card" onClick={() => handleClick(title)}>
-      <h3 className="card__title">{title}</h3>
+      <img src={imgPath} className="card_image" />
+      <h2>{title}</h2>
     </div>
   )
 }
