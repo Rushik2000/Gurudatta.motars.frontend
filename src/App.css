@@ -8,7 +8,7 @@
 .body {
   margin: 0;
   padding: 0;
-} 
+}
 
 .bill-header {
   display: grid;
@@ -19,7 +19,8 @@
 }
 
 .bill-header h5 {
-  grid-column: 2; /* Center column */
+  grid-column: 2;
+  /* Center column */
   text-align: center;
   margin: 0;
 }
@@ -37,6 +38,7 @@
 .logo {
   height: 28em;
   padding: 15px;
+  margin-left: 40px;
   will-change: filter;
   transition: filter 300ms;
   border-radius: 240px;
@@ -70,6 +72,29 @@
   color: #888;
 }
 
+.header-grid {
+  display: grid;
+  grid-column: 3;
+  margin-bottom: 30px;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.header-grid h2 {
+  color: red;
+  text-align: left;
+}
+
+.last-grid-header {
+  color: red;
+  text-align: right;
+}
+
+.profile-icon {
+  width: 7%;
+  margin-left: 568px;
+}
+
 .app-header {
   width: 100%;
   max-width: none;
@@ -78,7 +103,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: red;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -107,7 +131,7 @@
   background-color: orangered;
   border-radius: 30px;
   padding: 20px;
-  margin:10px 70px;
+  margin: 10px 70px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
@@ -480,22 +504,27 @@ input[type="text"] {
 }
 
 .dropdown-wrapperr {
-  position: relative; /* Needed for absolute positioning inside */
-  width: 200px; /* adjust as needed */
+  position: relative;
+  /* Needed for absolute positioning inside */
+  width: 200px;
+  /* adjust as needed */
 }
 
 .dropdownn {
   position: absolute;
-  bottom: 67%;      /* place it directly above the input */
+  bottom: 67%;
+  /* place it directly above the input */
   left: 90px;
   right: 0;
   width: 70%;
   border: 1px solid #ccc;
-  border-radius: 6px 6px 0 0; /* rounded corners on top */
+  border-radius: 6px 6px 0 0;
+  /* rounded corners on top */
   box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
   max-height: 100px;
   overflow-y: auto;
-  z-index: 10;       /* ensures it’s above the input */
+  z-index: 10;
+  /* ensures it’s above the input */
   list-style-type: none;
 }
 
