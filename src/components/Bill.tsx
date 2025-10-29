@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import '../css/Bill.css'
 import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import styles from '../css/Bill.module.css'
 
 interface Product {
     pid: string;
@@ -279,16 +279,16 @@ const Bill: React.FC = () => {
     }
 
     return (
-        <div className="bill-container">
+        <div className={styles.billcontainer}>
             {/* Customer Details Section */}
-            <div className="customer-details">
-                <div className='bill-header'>
+            <div className={styles.customerdetails}>
+                <div className={styles.billheader}>
                     <h5>🕉️गुरुदत्त मोटर्स & स्पेअर्स🕉️</h5>
                     <button
-                        className='close-button'
+                        className={styles.closebutton}
                         onClick={closeButtonHandler}>Close X</button>
                 </div>
-                <div className="customer-form">
+                <div className={styles.customerform}>
                     <input
                         type="text"
                         name="name"
@@ -301,7 +301,7 @@ const Bill: React.FC = () => {
                     />
 
                     {showCustomerDropdown && customerResults.length > 0 && (
-                        <ul className="dropdown">
+                        <ul className={styles.dropdown}>
                             {customerResults.map((cust) => (
                                 <li key={cust.csid} onMouseDown={() => {
                                     autoFillCustomerDetail(cust)
@@ -325,7 +325,7 @@ const Bill: React.FC = () => {
                         placeholder="Date"
                         value={customer.date}
                         onChange={handleCustomerChange}
-                        className='date-input'
+                        className={styles.dateinput}
                     />
                     <input
                         type="text"
@@ -345,7 +345,7 @@ const Bill: React.FC = () => {
             </div>
 
             {/* Products Table */}
-            <table className="bill-table">
+            <table className={styles.billtable}>
                 <thead>
                     <tr>
                         <th>Product</th>
@@ -368,7 +368,7 @@ const Bill: React.FC = () => {
                                     value={product.name}
                                     placeholder="Enter Product"
                                     onChange={(e) => handleNameChange(product.pid, e.target.value)}
-                                    className="no-style-input"
+                                    className={styles.nostyleinput}
                                 />
                             </td>
                             {/* Intial price will be fetched from DB but id user wants he can change a price
@@ -380,7 +380,7 @@ const Bill: React.FC = () => {
                                     value={'₹ ' + product.price}
                                     placeholder="Enter Price"
                                     onChange={(e) => handleNumericInput(e, product.pid, "price")}
-                                    className="no-style-input "
+                                    className={styles.nostyleinput}
                                     inputMode="numeric"
                                 />
                             </td>
@@ -390,7 +390,7 @@ const Bill: React.FC = () => {
                                     value={product.quantity.toString()}
                                     placeholder="Qty"
                                     onChange={(e) => handleNumericInput(e, product.pid, "quantity")}
-                                    className="no-style-input"
+                                    className={styles.nostyleinput}
                                     inputMode="numeric"
                                 />
                             </td>
@@ -404,21 +404,21 @@ const Bill: React.FC = () => {
             </table>
 
             {/* ✅ Add Row Button */}
-            <div className="add-row">
+            <div className={styles.addrow}>
                 <button onClick={addNewRow}>+ Add Row</button>
             </div>
 
             {/* Bill Summary */}
-            <div className="bill-summary">
+            <div className={styles.billsummary}>
                 <p>Subtotal: ₹{subtotal}</p>
                 <p>Tax (10%): ₹{tax}</p>
                 <p><strong>Total: ₹{total}</strong></p>
             </div>
 
-            <div className="bill-footer-wrapper">
-                <div className="creator-left">
+            <div className={styles.billfooterwrapper}>
+                <div className={styles.creatorleft}>
                     <label htmlFor="createdBy">Created by:</label>
-                    <div className="dropdown-wrapperr">
+                    <div className={styles.dropdownwrapperr}>
                         <input
                             id="createdBy"
                             type="text"
@@ -426,10 +426,10 @@ const Bill: React.FC = () => {
                             readOnly
                             onClick={fetchAdmins}
                             placeholder="Select your name"
-                            className="no-style-input"
+                            className={styles.nostyleinput}
                         />
                         {showAdminDropdown && (
-                            <ul className="dropdownn">
+                            <ul className={styles.dropdownn}>
                                 {loading ? (
                                     <li>Loading...</li>
                                 ) : admins.length > 0 ? (
@@ -449,11 +449,11 @@ const Bill: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="generate-center">
+                <div className={styles.generatecenter}>
                     <button
                         onClick={handleGenerateBill}
                         disabled={loading || createdBy.trim() === "" || total === 0}
-                        className="generate-bill-btn"
+                        className={styles.generatebillbtn}
                     >
                         {loading ? "Generating..." : "🧾 Generate Bill"}
                     </button>
@@ -461,12 +461,12 @@ const Bill: React.FC = () => {
             </div>
 
             {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
+                <div className={styles.modaloverlay}>
+                    <div className={styles.modalcontent}>
                         <h2>✅ Bill Generated Successfully</h2>
-                        <div className="modal-actions">
-                            <button onClick={handlePrint} className='print-btn'>🖨️ Print</button>
-                            <button onClick={() => setShowModal(false)} className='close-btn'>Close</button>
+                        <div className={styles.modalactions}>
+                            <button onClick={handlePrint} className={styles.printbtn}>🖨️ Print</button>
+                            <button onClick={() => setShowModal(false)} className={styles.closebtn}>Close</button>
                         </div>
                     </div>
                 </div>

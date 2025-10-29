@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../css/Customer.css";
+import styles from '../css/Customer.module.css'
 
 interface Customer {
   csid?: string;
@@ -128,10 +128,10 @@ const Customer: React.FC = () => {
   };
 
   return (
-    <div className="customer-container">
-      <div className="cust-form-section">
+    <div className={styles.customercontainer}>
+      <div className={styles.custformsection}>
         <h2>Add / Edit Customer</h2>
-        <div className="cust-form">
+        <div className={styles.custform}>
           <input
             type="text"
             name="name"
@@ -143,7 +143,7 @@ const Customer: React.FC = () => {
             }}
           />
           {showCustomerDropdown && customerResults.length > 0 && (
-            <ul className="dropdown">
+            <ul className={styles.dropdown}>
               {customerResults.map((cust) => (
                 <li key={cust.csid} onMouseDown={() => {
                   autoFillCustomerDetail(cust)
@@ -173,25 +173,25 @@ const Customer: React.FC = () => {
             value={customer.address}
             onChange={handleChange}
           ></textarea>
-          <button className="add-btn" onClick={handleAddCustomer}>
+          <button className={styles.addbtn} onClick={handleAddCustomer}>
             Save Customer
           </button>
         </div>
       </div>
 
-      <div className="customer-list-section">
-        <div className="customer-list-header">
+      <div className={styles.customerlistsection}>
+        <div className={styles.customerlistheader}>
           <h2>Customer History</h2>
           <input
             type="text"
-            className="search-box"
+            className={styles.searchbox}
             placeholder="Search customer..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        <div className="customer-table">
+        <div className={styles.customertable}>
           <table>
             <thead>
               <tr>
@@ -210,7 +210,7 @@ const Customer: React.FC = () => {
                     <td>{cust.email || "—"}</td>
                     <td>
                       <button
-                        className="view-bills-btn"
+                        className={styles.viewbillsbtn}
                         onClick={() => cust.csid && handleViewBills(cust.csid)}
                       >
                         View
@@ -232,10 +232,10 @@ const Customer: React.FC = () => {
 
       {/* ========== BILL HISTORY MODAL ========== */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className={styles.modaloverlay}>
+          <div className={styles.modalcontent}>
             <h3>Customer Bill History</h3>
-            <table className="bill--table">
+            <table className={styles.billtable}>
               <thead>
                 <tr>
                   <th>Bill ID</th>
@@ -255,7 +255,7 @@ const Customer: React.FC = () => {
                 ))}
               </tbody>
             </table>
-            <button className="close-modal-btn" onClick={() => setShowModal(false)}>
+            <button className={styles.closemodalbtn} onClick={() => setShowModal(false)}>
               Close
             </button>
           </div>
