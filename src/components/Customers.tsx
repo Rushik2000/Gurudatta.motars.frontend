@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../css/Customer.css";
 
 interface Customer {
-  csid?: string; // now optional since backend will assign it
+  csid?: string;
   name: string;
   phone: string;
   email?: string;
@@ -20,6 +20,11 @@ interface BillProduct {
 }
 
 const Customer: React.FC = () => {
+  const getTodayDate = (): string => {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    };
+    
   const [customer, setCustomer] = useState<Customer>({
     name: "",
     phone: "",
@@ -88,16 +93,6 @@ const Customer: React.FC = () => {
       }, 400);
 
       return () => clearTimeout(delayDebounce);
-
-      // try {
-      //   const res = await fetch(
-      //     `http://localhost:8080/search?name=${searchTerm}`
-      //   );
-      //   const data = await res.json();
-      //   setCustomers(data);
-      // } catch (error) {
-      //   console.error("Error fetching customers:", error);
-      // }
     };
 
     fetchCustomers();
