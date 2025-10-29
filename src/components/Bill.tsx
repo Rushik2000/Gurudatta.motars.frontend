@@ -12,6 +12,8 @@ interface Product {
 
 interface BillProduct {
     bpid: string;
+    date?: string;
+    billBy?: string;
     productList: Product[];
     subtotal: number;
     total: number;
@@ -24,8 +26,6 @@ interface Customer {
     phone: string;
     email: string;
     address: string;
-    date: string;
-    billBy: string;
     billProductId: string;
 }
 
@@ -35,10 +35,6 @@ interface Admin {
 }
 
 const Bill: React.FC = () => {
-    const getTodayDate = (): string => {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
-    };
 
     const [customer, setCustomer] = useState<Customer>({
         csid: '',
@@ -46,13 +42,9 @@ const Bill: React.FC = () => {
         phone: '',
         email: '',
         address: '',
-        date: getTodayDate(),
-        billBy: '',
         billProductId: ''
     });
 
-
-    // Mock products and later must be fetched from DB
     const initialProducts: Product[] = [
         { pid: uuid(), name: '', price: 0, quantity: 1 }
     ];
@@ -65,9 +57,10 @@ const Bill: React.FC = () => {
     const [customerResults, setCustomerResults] = useState<Customer[]>([]);
     const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
     const [showAdminDropdown, setShowAdminDropdown] = useState(false);
+    const [date, setDate] = useState('');
     const [admins, setAdmins] = useState([]);
     const dropdownRef = useRef<HTMLUListElement | null>(null);
-    const [backendServer] = useState("http://localhost:8080/")
+    const backendServer = 'http://localhost:8080/'
     const navigate = useNavigate();
 
     const removeProduct = (id: string) => {
@@ -76,6 +69,15 @@ const Bill: React.FC = () => {
     const subtotal = products.reduce((sum, i) => sum + i.price * i.quantity, 0);
     const tax = subtotal * 0.1;
     const total = subtotal + tax;
+
+    useEffect(() => {
+        const updateDate = () => {
+            const today = new Date();
+            setDate(today.toISOString().split('T')[0]);
+        };
+
+        updateDate();
+    }, []);
 
     const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -127,13 +129,10 @@ const Bill: React.FC = () => {
 
     const handleCustomerAdd = async (billProductId: string | null) => {
         try {
-            console.log('customer', customer);
-            console.log('billProductId', billProductId);
             const updatedCustomer = {
                 ...customer,
                 csid: customer.csid,
                 billProductId: billProductId,
-                billBy: createdBy
             };
             const response = await fetch(backendServer + "customer", {
                 method: "POST",
@@ -144,7 +143,6 @@ const Bill: React.FC = () => {
             });
             const customerRes = await response.json();
             setCustomer(customerRes);
-            console.log('customer added response', customerRes);
         } catch (error) {
             console.error("Error saving data: ", error);
         }
@@ -189,8 +187,6 @@ const Bill: React.FC = () => {
             phone: cust.phone,
             email: cust.email,
             address: cust.address,
-            date: getTodayDate(),
-            billBy: cust.billBy,
             billProductId: cust.billProductId
         }
         setCustomer(newCustomer);
@@ -222,12 +218,11 @@ const Bill: React.FC = () => {
 
     const handleProductDataAdd = async (): Promise<string | null> => {
         try {
-            console.log('products', products);
-            console.log('total', total);
-            console.log('customer detail in product before add', customer);
             const bpid = customer.billProductId ? customer.billProductId : '';
             const billProduct: BillProduct = {
                 bpid: bpid,
+                date: date,
+                billBy: createdBy,
                 productList: products,
                 subtotal: subtotal,
                 total: total,
@@ -245,7 +240,6 @@ const Bill: React.FC = () => {
             if (!response.ok) throw new Error("Failed to save BillProduct");
 
             const savedData = await response.json();
-            console.log('bill product added response', savedData);
             return savedData.bpid;
 
         } catch (error) {
@@ -258,7 +252,6 @@ const Bill: React.FC = () => {
         try {
             setLoading(true);
             const billProductId = await handleProductDataAdd();
-            console.log('billProductId', billProductId);
             if (!billProductId) throw new Error("Failed to save bill product.");
             handleCustomerAdd(billProductId);
             setShowModal(true);
@@ -271,7 +264,7 @@ const Bill: React.FC = () => {
     };
 
     const closeButtonHandler = () => {
-        if(customer.name && customer.csid && total !== 0) {
+        if (customer.name && customer.csid && total !== 0) {
             handleCustomerAdd(null);
         }
         navigate('/');
@@ -323,8 +316,8 @@ const Bill: React.FC = () => {
                         type="date"
                         name="date"
                         placeholder="Date"
-                        value={customer.date}
-                        onChange={handleCustomerChange}
+                        value={date}
+                        onChange={() => {}}
                         className={styles.dateinput}
                     />
                     <input

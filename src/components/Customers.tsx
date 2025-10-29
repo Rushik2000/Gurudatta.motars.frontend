@@ -7,24 +7,27 @@ interface Customer {
   phone: string;
   email?: string;
   address?: string;
-  date?: string;
-  billBy?: string;
   billProductId?: string;
+}
+
+interface Product {
+  pid: string;
+  name: string;
+  price: number;
+  quantity: number;
 }
 
 interface BillProduct {
   bpid: string;
+  date?: string;
+  billBy?: string;
+  productList: Product[];
   subtotal: number;
   total: number;
   tax: number;
 }
 
 const Customer: React.FC = () => {
-  const getTodayDate = (): string => {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
-    };
-    
   const [customer, setCustomer] = useState<Customer>({
     name: "",
     phone: "",
@@ -56,7 +59,7 @@ const Customer: React.FC = () => {
     }
 
     try {
-      const res = await fetch(backendServer + 'customers', {
+      const res = await fetch(backendServer + 'customer', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(customer),
@@ -106,8 +109,6 @@ const Customer: React.FC = () => {
       phone: cust.phone,
       email: cust.email,
       address: cust.address,
-      date: getTodayDate(),
-      billBy: cust.billBy,
       billProductId: cust.billProductId
     }
     setCustomer(newCustomer);
@@ -117,7 +118,7 @@ const Customer: React.FC = () => {
   const handleViewBills = async (customerId: string) => {
     try {
       const res = await fetch(
-        `http://localhost:8080/customer/${customerId}`
+        backendServer + `customer/${customerId}`
       );
       const data = await res.json();
       setBillHistory(data);
