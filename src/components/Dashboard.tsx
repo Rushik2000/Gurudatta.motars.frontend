@@ -1,6 +1,5 @@
 import Card from '../components/Card'
 import logo from '../assets/Logo.png'
-import '../App.css'
 import bill from '../assets/bill.png'
 import customer from '../assets/customer.png'
 import inventory from '../assets/inventory.png'
