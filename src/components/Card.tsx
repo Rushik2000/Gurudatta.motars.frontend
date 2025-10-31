@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import '../App.css';
+import styles from '../css/Card.module.css'
 
 interface Props {
     title: string;
@@ -15,8 +15,8 @@ interface Props {
   }
 
   return (
-    <div className="card" onClick={() => handleClick(title)}>
-      <img src={imgPath} className="card_image" />
+    <div className={styles.card} onClick={() => handleClick(title)}>
+      <img src={imgPath} className={styles.cardimage} />
       <h2>{title}</h2>
     </div>
   )

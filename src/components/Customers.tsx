@@ -36,13 +36,16 @@ const Customer: React.FC = () => {
   });
 
   const backendServer = 'http://localhost:8080/';
-
-  const [customers, setCustomers] = useState<Customer[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [billHistory, setBillHistory] = useState<BillProduct[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [customerResults, setCustomerResults] = useState<Customer[]>([]);
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const [historySearchTerm, setHistorySearchTerm] = useState("");
+  const [showCustomerSeachDropdown, setShowCustomerSearchDropdown] = useState(false);
+  const [searchCustomerResults, setSearchCustomerResults] = useState<Customer[]>([]);
+  const [foundCustomers, setFoundCustomer] = useState<Customer>();
+  const [searchedCustomerBills, setSearchedCustomerBills] = useState<BillProduct[]>([]);
+  const [isSelecting, setIsSelecting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -66,9 +69,6 @@ const Customer: React.FC = () => {
       });
 
       if (!res.ok) throw new Error("Failed to save customer");
-
-      const savedCustomer = await res.json();
-      setCustomers((prev) => [...prev, savedCustomer]);
       setCustomer({ name: "", phone: "", email: "", address: "" });
       alert("Customer added successfully!");
     } catch (error) {
@@ -76,6 +76,35 @@ const Customer: React.FC = () => {
       alert("Error saving customer. Please try again.");
     }
   };
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      if (isSelecting) {
+        setIsSelecting(false);
+        return;
+      }
+
+      if (historySearchTerm.length < 2) {
+        setSearchCustomerResults([]);
+        setShowCustomerSearchDropdown(false);
+        return;
+      }
+
+      const delayDebounce = setTimeout(() => {
+        fetch(backendServer + `search?name=${historySearchTerm}`)
+          .then((res) => res.json())
+          .then((data) => {
+            setSearchCustomerResults(data);
+            setShowCustomerSearchDropdown(true);
+          })
+          .catch((err) => console.error("Search failed", err));
+      }, 100);
+
+      return () => clearTimeout(delayDebounce);
+    };
+
+    fetchCustomers();
+  }, [historySearchTerm]);
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -101,6 +130,10 @@ const Customer: React.FC = () => {
     fetchCustomers();
   }, [searchTerm]);
 
+  useEffect(() => {
+    setSearchedCustomerBills([]);
+  }, [historySearchTerm]);
+
   const autoFillCustomerDetail = (cust: Customer) => {
     setSearchTerm(cust.name);
     const newCustomer: Customer = {
@@ -121,12 +154,21 @@ const Customer: React.FC = () => {
         backendServer + `customer/${customerId}`
       );
       const data = await res.json();
-      setBillHistory(data);
+      // should be added a product state
       setShowModal(true);
     } catch (error) {
       console.error("Error fetching bill history:", error);
     }
   };
+
+  const getCustomerInfo = async (cust: Customer) => {
+    setFoundCustomer(cust)
+    const billsData = await fetch(
+      backendServer + `bills/${cust.csid}`
+    );
+    const data = await billsData.json();
+    setSearchedCustomerBills(data);
+  }
 
   return (
     <div className={styles.customercontainer}>
@@ -187,9 +229,29 @@ const Customer: React.FC = () => {
             type="text"
             className={styles.searchbox}
             placeholder="Search customer..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={historySearchTerm}
+            onChange={(e) => setHistorySearchTerm(e.target.value)}
+            onFocus={() => {
+              if (searchCustomerResults.length > 0) setShowCustomerSearchDropdown(true);
+            }}
+            onBlur={() => {
+              setTimeout(() => setShowCustomerSearchDropdown(false), 100);
+            }}
           />
+          {showCustomerSeachDropdown && searchCustomerResults.length > 0 && (
+            <ul className={styles.searchdropdown}>
+              {searchCustomerResults.map((cust) => (
+                <li key={cust.csid} onMouseDown={() => {
+                  setIsSelecting(true);
+                  setHistorySearchTerm(cust.name);
+                  setShowCustomerSearchDropdown(false);
+                  if (cust.csid) getCustomerInfo(cust);
+                }}>
+                  {cust.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className={styles.customertable}>
@@ -197,22 +259,25 @@ const Customer: React.FC = () => {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Phone</th>
-                <th>Email</th>
+                <th>Price</th>
+                <th>Date</th>
                 <th>View Bills</th>
               </tr>
             </thead>
             <tbody>
-              {customers.length > 0 ? (
-                customers.map((cust) => (
-                  <tr key={cust.csid}>
-                    <td>{cust.name}</td>
-                    <td>{cust.phone}</td>
-                    <td>{cust.email || "—"}</td>
+              {/* need customer and bill info 
+              customer will now be searchedCustomers*/}
+              {foundCustomers && searchedCustomerBills.length > 0 ? (
+                searchedCustomerBills.map((bill) => (
+                  <tr key={bill.bpid}>
+                    <td>{foundCustomers.name}</td>
+                    {/*phone to bill price and email to date from bill */}
+                    <td>{'₹ ' + bill?.total}</td>
+                    <td>{bill?.date}</td>
                     <td>
                       <button
                         className={styles.viewbillsbtn}
-                        onClick={() => cust.csid && handleViewBills(cust.csid)}
+                        onClick={() => foundCustomers.csid && handleViewBills(foundCustomers.csid)}
                       >
                         View
                       </button>

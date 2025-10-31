@@ -23,47 +23,6 @@
   color: red;
 }
 
-.logo {
-  height: 28em;
-  padding: 15px;
-  margin-left: 40px;
-  will-change: filter;
-  transition: filter 300ms;
-  border-radius: 240px;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.headergrid {
-  display: grid;
-  grid-column: 3;
-  margin-bottom: 30px;
-  gap: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-
-.headergrid h2 {
-  color: red;
-  text-align: left;
-}
-
-.profileicon {
-  width: 7%;
-  margin-left: 568px;
-}
-
 .appheader {
   width: 100%;
   max-width: none;
@@ -88,34 +47,6 @@
   margin: 0;
   font-size: 1.5em;
   color: #007bff;
-}
-
-.cardgrid {
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-
-.card {
-  background-color: orangered;
-  border-radius: 30px;
-  padding: 20px;
-  margin: 10px 70px;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-.card:hover {
-  filter: drop-shadow(0 0 1em white);
-}
-
-.card.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-.cardimage {
-  width: 30%;
 }
 
 .billcontainer {

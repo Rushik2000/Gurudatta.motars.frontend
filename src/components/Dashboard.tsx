@@ -5,17 +5,17 @@ import bill from '../assets/bill.png'
 import customer from '../assets/customer.png'
 import inventory from '../assets/inventory.png'
 import user_1 from '../assets/user_1.png'
+import styles from '../css/Dashboard.module.css'
 
 const Dashboard = () => {
   return (
     <>
-      <div className='header-grid'>
+      <div className={styles.headergrid}>
         <h2></h2>
-        <img src={logo} className="logo react" alt="React logo" />
-        <img src={user_1} className='profile-icon' />
+        <img src={logo} className={styles.logo} alt="React logo" />
+        <img src={user_1} className={styles.profileicon} />
       </div>
-
-      <div className="card-grid">
+      <div className={styles.cardgrid}>
         <Card title="Bill" imgPath={bill} />
         <Card title="Inventory" imgPath={inventory} />
         <Card title="Customers" imgPath={customer} />

@@ -1,0 +1,21 @@
+.card {
+  background-color: orangered;
+  border-radius: 30px;
+  padding: 20px;
+  margin: 10px 70px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  filter: drop-shadow(0 0 1em white);
+}
+
+.card.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.cardimage {
+  width: 30%;
+}

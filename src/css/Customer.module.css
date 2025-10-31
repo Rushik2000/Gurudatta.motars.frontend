@@ -352,3 +352,46 @@
   position: relative;
   width: 200px;
 }
+
+.searchdropdownwrapper {
+  position: relative;
+  display: inline-block;
+  width: 250px; /* match your search input width */
+}
+
+.searchbox {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.searchdropdown {
+  position: absolute;
+  top: 15.2%;
+  left: 36.5%;
+  width: 20%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  z-index: 9999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border-radius: 4px;
+  border-color: black;
+}
+
+.searchdropdown li {
+  font-size: 14px;
+  color: #333;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.searchdropdown li:hover {
+  background-color: #f3f4f6;
+}
