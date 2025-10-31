@@ -4,6 +4,7 @@ import bill from '../assets/bill.png'
 import customer from '../assets/customer.png'
 import inventory from '../assets/inventory.png'
 import user_1 from '../assets/user_1.png'
+import '../App.css'
 import styles from '../css/Dashboard.module.css'
 
 const Dashboard = () => {
