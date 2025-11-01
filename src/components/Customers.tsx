@@ -258,84 +258,57 @@ const Customer: React.FC = () => {
           </div>
 
           <div className={styles.customertable}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Date</th>
-                  <th>View Bills</th>
-                </tr>
-              </thead>
-              <tbody>
-                {foundCustomers && searchedCustomerBills.length > 0 ? (
-                  searchedCustomerBills.map((bill) => (
-                    <tr key={bill.bpid}>
-                      <td>{foundCustomers.name}</td>
-                      <td>{'₹ ' + bill?.total}</td>
-                      <td>{bill?.date}</td>
-                      <td>
-                        <button
-                          className={styles.viewbillsbtn}
-                          onClick={() => foundCustomers.csid && handleViewBills(foundCustomers.csid)}
-                        >
-                          View
-                        </button>
+            <div className={styles.tableContainer}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                    <th>Bill By</th>
+                    <th>View Bills</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div className={styles.tableWrapper}>
+              <table>
+                <tbody>
+                  {foundCustomers && searchedCustomerBills.length > 0 ? (
+                    searchedCustomerBills.map((bill) => (
+                      <tr key={bill.bpid}>
+                        <td>{foundCustomers.name}</td>
+                        <td>{'₹ ' + bill?.total}</td>
+                        <td>{bill?.date}</td>
+                        <td>{bill?.billBy}</td>
+                        <td>
+                          <button
+                            className={styles.viewbillsbtn}
+                            onClick={() => foundCustomers.csid && handleViewBills(foundCustomers.csid)}
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} style={{ textAlign: "center", color: "#6b7280" }}>
+                        No customers found
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} style={{ textAlign: "center", color: "#6b7280" }}>
-                      No customers found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-
-
-        {/* ========== BILL HISTORY MODAL ========== */}
-        {/* {showModal && (
-        <div className={styles.modaloverlay}>
-          <div className={styles.modalcontent}>
-            <h3>Customer Bill History</h3>
-            <table className={styles.billtable}>
-              <thead>
-                <tr>
-                  <th>Bill ID</th>
-                  <th>Subtotal</th>
-                  <th>Tax</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {billHistory.map((bill) => (
-                  <tr key={bill.bpid}>
-                    <td>{bill.bpid}</td>
-                    <td>₹{bill.subtotal}</td>
-                    <td>₹{bill.tax}</td>
-                    <td>₹{bill.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button className={styles.closemodalbtn} onClick={() => setShowModal(false)}>
-              Close
-            </button>
-          </div>
-        </div>
-      )} */}
-        
-        {/*</div>*/}
       </div >
       <div className={styles.billView}>
-          {showModal && (
-            <Bill />
-          )}
-        </div>
+        {showModal && (
+          <Bill />
+        )}
+      </div>
     </div>
   );
 };

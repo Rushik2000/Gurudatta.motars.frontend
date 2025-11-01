@@ -369,63 +369,69 @@ const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
             </div>
 
             {/* Products Table */}
-            <table className={styles.billtable}>
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Subtotal</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map(product => (
-                        <tr key={product.pid}>
-                            {/* Product name should be a text box where i can search product name and 
+            <div className={styles.tableContainer}>
+                <table className={styles.billtable}>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div className={styles.tableBodyWrapper}>
+                    <table className={styles.billtable}>
+                        <tbody>
+                            {products.map(product => (
+                                <tr key={product.pid}>
+                                    {/* Product name should be a text box where i can search product name and 
                             all the data like price and all detail should be fetched from DB, If no product result then one popup should get display
                             to add the detail about that product and once click add that product should get added
                             in DB and available for future use   */}
-                            <td>
-                                <input
-                                    type="text"
-                                    value={product.name}
-                                    placeholder="Enter Product"
-                                    onChange={(e) => handleNameChange(product.pid, e.target.value)}
-                                    className={styles.nostyleinput}
-                                />
-                            </td>
-                            {/* Intial price will be fetched from DB but id user wants he can change a price
+                                    <td>
+                                        <input
+                                            type="text"
+                                            value={product.name}
+                                            placeholder="Enter Product"
+                                            onChange={(e) => handleNameChange(product.pid, e.target.value)}
+                                            className={styles.nostyleinput}
+                                        />
+                                    </td>
+                                    {/* Intial price will be fetched from DB but id user wants he can change a price
                             As soon as he change the price the price must be updated In DB for that product for future use
                             Better to use text box */}
-                            <td>
-                                <input
-                                    type="text"
-                                    value={'₹ ' + product.price}
-                                    placeholder="Enter Price"
-                                    onChange={(e) => handleNumericInput(e, product.pid, "price")}
-                                    className={styles.nostyleinput}
-                                    inputMode="numeric"
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={product.quantity.toString()}
-                                    placeholder="Qty"
-                                    onChange={(e) => handleNumericInput(e, product.pid, "quantity")}
-                                    className={styles.nostyleinput}
-                                    inputMode="numeric"
-                                />
-                            </td>
-                            <td>{'₹ ' + product.price * product.quantity}</td>
-                            <td>
-                                <button onClick={() => removeProduct(product.pid)}>Remove</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            value={'₹ ' + product.price}
+                                            placeholder="Enter Price"
+                                            onChange={(e) => handleNumericInput(e, product.pid, "price")}
+                                            className={styles.nostyleinput}
+                                            inputMode="numeric"
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            value={product.quantity.toString()}
+                                            placeholder="Qty"
+                                            onChange={(e) => handleNumericInput(e, product.pid, "quantity")}
+                                            className={styles.nostyleinput}
+                                            inputMode="numeric"
+                                        />
+                                    </td>
+                                    <td>{'₹ ' + product.price * product.quantity}</td>
+                                    <td>
+                                        <button onClick={() => removeProduct(product.pid)}>Remove</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             {/* ✅ Add Row Button */}
             <div className={styles.addrow}>
