@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from '../css/Customer.module.css'
+import Bill from "./Bill";
 
 interface Customer {
   csid?: string;
@@ -171,133 +172,133 @@ const Customer: React.FC = () => {
   }
 
   return (
-    <div className={styles.customercontainer}>
-      <div className={styles.custformsection}>
-        <h2>Add / Edit Customer</h2>
-        <div className={styles.custform}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Customer Name"
-            value={customer.name}
-            onChange={handleChange}
-            onFocus={() => {
-              if (customerResults.length > 0) setShowCustomerDropdown(true);
-            }}
-          />
-          {showCustomerDropdown && customerResults.length > 0 && (
-            <ul className={styles.dropdown}>
-              {customerResults.map((cust) => (
-                <li key={cust.csid} onMouseDown={() => {
-                  autoFillCustomerDetail(cust)
-                }}>
-                  {cust.name}
-                </li>
-              ))}
-            </ul>
-          )}
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            value={customer.phone}
-            onChange={handleChange}
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email (optional)"
-            value={customer.email}
-            onChange={handleChange}
-          />
-          <textarea
-            name="address"
-            placeholder="Address (optional)"
-            value={customer.address}
-            onChange={handleChange}
-          ></textarea>
-          <button className={styles.addbtn} onClick={handleAddCustomer}>
-            Save Customer
-          </button>
-        </div>
-      </div>
-
-      <div className={styles.customerlistsection}>
-        <div className={styles.customerlistheader}>
-          <h2>Customer History</h2>
-          <input
-            type="text"
-            className={styles.searchbox}
-            placeholder="Search customer..."
-            value={historySearchTerm}
-            onChange={(e) => setHistorySearchTerm(e.target.value)}
-            onFocus={() => {
-              if (searchCustomerResults.length > 0) setShowCustomerSearchDropdown(true);
-            }}
-            onBlur={() => {
-              setTimeout(() => setShowCustomerSearchDropdown(false), 100);
-            }}
-          />
-          {showCustomerSeachDropdown && searchCustomerResults.length > 0 && (
-            <ul className={styles.searchdropdown}>
-              {searchCustomerResults.map((cust) => (
-                <li key={cust.csid} onMouseDown={() => {
-                  setIsSelecting(true);
-                  setHistorySearchTerm(cust.name);
-                  setShowCustomerSearchDropdown(false);
-                  if (cust.csid) getCustomerInfo(cust);
-                }}>
-                  {cust.name}
-                </li>
-              ))}
-            </ul>
-          )}
+    <div className={styles.main}>
+      <div className={styles.customercontainer}>
+        <div className={styles.custformsection}>
+          <h2>Add / Edit Customer</h2>
+          <div className={styles.custform}>
+            <input
+              type="text"
+              name="name"
+              placeholder="Customer Name"
+              value={customer.name}
+              onChange={handleChange}
+              onFocus={() => {
+                if (customerResults.length > 0) setShowCustomerDropdown(true);
+              }}
+            />
+            {showCustomerDropdown && customerResults.length > 0 && (
+              <ul className={styles.dropdown}>
+                {customerResults.map((cust) => (
+                  <li key={cust.csid} onMouseDown={() => {
+                    autoFillCustomerDetail(cust)
+                  }}>
+                    {cust.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={customer.phone}
+              onChange={handleChange}
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email (optional)"
+              value={customer.email}
+              onChange={handleChange}
+            />
+            <textarea
+              name="address"
+              placeholder="Address (optional)"
+              value={customer.address}
+              onChange={handleChange}
+            ></textarea>
+            <button className={styles.addbtn} onClick={handleAddCustomer}>
+              Save Customer
+            </button>
+          </div>
         </div>
 
-        <div className={styles.customertable}>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Date</th>
-                <th>View Bills</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* need customer and bill info 
-              customer will now be searchedCustomers*/}
-              {foundCustomers && searchedCustomerBills.length > 0 ? (
-                searchedCustomerBills.map((bill) => (
-                  <tr key={bill.bpid}>
-                    <td>{foundCustomers.name}</td>
-                    {/*phone to bill price and email to date from bill */}
-                    <td>{'₹ ' + bill?.total}</td>
-                    <td>{bill?.date}</td>
-                    <td>
-                      <button
-                        className={styles.viewbillsbtn}
-                        onClick={() => foundCustomers.csid && handleViewBills(foundCustomers.csid)}
-                      >
-                        View
-                      </button>
+        <div className={styles.customerlistsection}>
+          <div className={styles.customerlistheader}>
+            <h2>Customer History</h2>
+            <input
+              type="text"
+              name="name"
+              className={styles.searchbox}
+              placeholder="Search customer..."
+              value={historySearchTerm}
+              onChange={(e) => setHistorySearchTerm(e.target.value)}
+              onFocus={() => {
+                if (searchCustomerResults.length > 0) setShowCustomerSearchDropdown(true);
+              }}
+              onBlur={() => {
+                setTimeout(() => setShowCustomerSearchDropdown(false), 100);
+              }}
+            />
+            {showCustomerSeachDropdown && searchCustomerResults.length > 0 && (
+              <ul className={styles.searchdropdown}>
+                {searchCustomerResults.map((cust) => (
+                  <li key={cust.csid} onMouseDown={() => {
+                    setIsSelecting(true);
+                    setHistorySearchTerm(cust.name);
+                    setShowCustomerSearchDropdown(false);
+                    if (cust.csid) getCustomerInfo(cust);
+                  }}>
+                    {cust.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className={styles.customertable}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Date</th>
+                  <th>View Bills</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foundCustomers && searchedCustomerBills.length > 0 ? (
+                  searchedCustomerBills.map((bill) => (
+                    <tr key={bill.bpid}>
+                      <td>{foundCustomers.name}</td>
+                      <td>{'₹ ' + bill?.total}</td>
+                      <td>{bill?.date}</td>
+                      <td>
+                        <button
+                          className={styles.viewbillsbtn}
+                          onClick={() => foundCustomers.csid && handleViewBills(foundCustomers.csid)}
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} style={{ textAlign: "center", color: "#6b7280" }}>
+                      No customers found
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} style={{ textAlign: "center", color: "#6b7280" }}>
-                    No customers found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      {/* ========== BILL HISTORY MODAL ========== */}
-      {showModal && (
+
+        {/* ========== BILL HISTORY MODAL ========== */}
+        {/* {showModal && (
         <div className={styles.modaloverlay}>
           <div className={styles.modalcontent}>
             <h3>Customer Bill History</h3>
@@ -326,7 +327,15 @@ const Customer: React.FC = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
+        
+        {/*</div>*/}
+      </div >
+      <div className={styles.billView}>
+          {showModal && (
+            <Bill />
+          )}
+        </div>
     </div>
   );
 };

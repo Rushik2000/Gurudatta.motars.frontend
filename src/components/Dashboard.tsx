@@ -17,8 +17,8 @@ const Dashboard = () => {
       </div>
       <div className={styles.cardgrid}>
         <Card title="Bill" imgPath={bill} />
-        <Card title="Inventory" imgPath={inventory} />
         <Card title="Customers" imgPath={customer} />
+        <Card title="Inventory" imgPath={inventory} />
       </div>
     </>
   )
