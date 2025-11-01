@@ -34,7 +34,11 @@ interface Admin {
     name: string;
 }
 
-const Bill: React.FC = () => {
+interface BillProps {
+    setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
     const [customer, setCustomer] = useState<Customer>({
         csid: '',
@@ -271,6 +275,33 @@ const Bill: React.FC = () => {
 
     }
 
+    const addNewBillBtnHandler = async () => {
+        // Making current customer billProductId as null so it can add new bill in the future with new id
+        const customerParam = {
+            ...customer,
+            csid: customer.csid,
+            billProductId: null,
+        };
+
+        const response = await fetch(backendServer + "customer", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(customerParam),
+        });
+
+        const customerRes = await response.json();
+        setCustomer(customerRes);
+
+        // popup model will disappear
+        setShowModal(false)
+
+        // ✅ Reset whole Bill component (new bill)
+        setRefreshKey(prev => prev + 1);
+
+    }
+
     return (
         <div className={styles.billcontainer}>
             {/* Customer Details Section */}
@@ -317,7 +348,7 @@ const Bill: React.FC = () => {
                         name="date"
                         placeholder="Date"
                         value={date}
-                        onChange={() => {}}
+                        onChange={() => { }}
                         className={styles.dateinput}
                     />
                     <input
@@ -458,8 +489,12 @@ const Bill: React.FC = () => {
                     <div className={styles.modalcontent}>
                         <h2>✅ Bill Generated Successfully</h2>
                         <div className={styles.modalactions}>
+                            <button onClick={() => setShowModal(false)} className={styles.continuebtn}>Continue🔙</button>
                             <button onClick={handlePrint} className={styles.printbtn}>🖨️ Print</button>
-                            <button onClick={() => setShowModal(false)} className={styles.closebtn}>Close</button>
+                            {/* Write new logic for new bill */}
+                            <button onClick={addNewBillBtnHandler} className={styles.newBillbtn}>
+                                New Bill +
+                            </button>
                         </div>
                     </div>
                 </div>

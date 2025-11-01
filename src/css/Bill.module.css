@@ -251,7 +251,7 @@
 .modalcontent {
   background: #fff;
   color: black;
-  padding: 30px 20px;
+  padding: 45PX 65px;
   border-radius: 10px;
   width: 90%;
   max-width: 400px;
@@ -267,22 +267,26 @@
 }
 
 .printbtn,
-.closebtn {
+.newBillbtn,
+.continuebtn {
   padding: 10px 16px;
   font-size: 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  color: white;
 }
 
 .printbtn {
   background-color: green;
-  color: white;
 }
 
-.closebtn {
+.newBillbtn {
   background-color: chocolate;
-  color: white;
+}
+
+.continuebtn {
+  background-color: dimgrey;
 }
 
 .billfooterwrapper {
