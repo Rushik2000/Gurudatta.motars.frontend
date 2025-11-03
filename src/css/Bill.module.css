@@ -96,7 +96,7 @@
   box-sizing: border-box;
 
   /* Custom icon */
-  background-image: url('./assets/icons8-calendar-50.png');
+  background-image: url('../assets/icons8-calendar-50.png');
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 20px 20px;
