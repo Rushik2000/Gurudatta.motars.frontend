@@ -29,6 +29,7 @@
   will-change: filter;
   transition: filter 300ms;
   border-radius: 240px;
+  filter: drop-shadow(0 0 1.3em darkorange);
 }
 
 .logo:hover {
