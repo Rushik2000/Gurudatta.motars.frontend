@@ -1,39 +1,16 @@
 import React, { useState, useEffect } from "react";
 import styles from '../css/Customer.module.css'
-import Bill from "./Bill";
-
-interface Customer {
-  csid?: string;
-  name: string;
-  phone: string;
-  email?: string;
-  address?: string;
-  billProductId?: string;
-}
-
-interface Product {
-  pid: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
-interface BillProduct {
-  bpid: string;
-  date?: string;
-  billBy?: string;
-  productList: Product[];
-  subtotal: number;
-  total: number;
-  tax: number;
-}
+import ViewBill from "./ViewBill";
+import type {BillProduct, Customer } from "../types/types";
 
 const Customer: React.FC = () => {
   const [customer, setCustomer] = useState<Customer>({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
+    csid : null,
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+    billProductId: ''
   });
 
   const backendServer = 'http://localhost:8080/';
@@ -44,9 +21,10 @@ const Customer: React.FC = () => {
   const [historySearchTerm, setHistorySearchTerm] = useState("");
   const [showCustomerSeachDropdown, setShowCustomerSearchDropdown] = useState(false);
   const [searchCustomerResults, setSearchCustomerResults] = useState<Customer[]>([]);
-  const [foundCustomers, setFoundCustomer] = useState<Customer>();
+  const [foundCustomer, setFoundCustomer] = useState<Customer>();
   const [searchedCustomerBills, setSearchedCustomerBills] = useState<BillProduct[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
+  const [selectedBill, setSelectedBill] = useState<BillProduct>();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -70,7 +48,7 @@ const Customer: React.FC = () => {
       });
 
       if (!res.ok) throw new Error("Failed to save customer");
-      setCustomer({ name: "", phone: "", email: "", address: "" });
+      setCustomer({ csid: null , name: "", phone: "", email: "", address: "", billProductId: null });
       alert("Customer added successfully!");
     } catch (error) {
       console.error("Error adding customer:", error);
@@ -149,17 +127,9 @@ const Customer: React.FC = () => {
     setShowCustomerDropdown(false);
   };
 
-  const handleViewBills = async (customerId: string) => {
-    try {
-      const res = await fetch(
-        backendServer + `customer/${customerId}`
-      );
-      const data = await res.json();
-      // should be added a product state
-      setShowModal(true);
-    } catch (error) {
-      console.error("Error fetching bill history:", error);
-    }
+  const handleViewBills = async (bill: BillProduct) => {
+    setSelectedBill(bill);
+    setShowModal(true);
   };
 
   const getCustomerInfo = async (cust: Customer) => {
@@ -274,17 +244,17 @@ const Customer: React.FC = () => {
             <div className={styles.tableWrapper}>
               <table>
                 <tbody>
-                  {foundCustomers && searchedCustomerBills.length > 0 ? (
+                  {foundCustomer && searchedCustomerBills.length > 0 ? (
                     searchedCustomerBills.map((bill) => (
                       <tr key={bill.bpid}>
-                        <td>{foundCustomers.name}</td>
+                        <td>{foundCustomer.name}</td>
                         <td>{'₹ ' + bill?.total}</td>
                         <td>{bill?.date}</td>
                         <td>{bill?.billBy}</td>
                         <td>
                           <button
                             className={styles.viewbillsbtn}
-                            onClick={() => foundCustomers.csid && handleViewBills(foundCustomers.csid)}
+                            onClick={() => bill && handleViewBills(bill)}
                           >
                             View
                           </button>
@@ -306,7 +276,11 @@ const Customer: React.FC = () => {
       </div >
       <div className={styles.billView}>
         {showModal && (
-          <Bill />
+          <ViewBill
+            foundCustomer={foundCustomer}
+            bill={selectedBill}
+            setShowModal = {setShowModal}
+          />
         )}
       </div>
     </div>

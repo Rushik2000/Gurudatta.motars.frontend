@@ -126,6 +126,7 @@
     border-radius: 8px;
     overflow: hidden;
     background: #ffffff;
+    table-layout: fixed;
 }
 
 .customertable th,

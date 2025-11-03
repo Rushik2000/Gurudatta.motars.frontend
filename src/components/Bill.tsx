@@ -2,37 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import styles from '../css/Bill.module.css'
-
-interface Product {
-    pid: string;
-    name: string;
-    price: number;
-    quantity: number;
-}
-
-interface BillProduct {
-    bpid: string;
-    date?: string;
-    billBy?: string;
-    productList: Product[];
-    subtotal: number;
-    total: number;
-    tax: number;
-}
-
-interface Customer {
-    csid: string;
-    name: string;
-    phone: string;
-    email: string;
-    address: string;
-    billProductId: string;
-}
-
-interface Admin {
-    aid: string;
-    name: string;
-}
+import type { Product, BillProduct, Customer, Admin } from '../types/types';
 
 interface BillProps {
     setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
@@ -41,12 +11,12 @@ interface BillProps {
 const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
     const [customer, setCustomer] = useState<Customer>({
-        csid: '',
+        csid: null,
         name: '',
         phone: '',
         email: '',
         address: '',
-        billProductId: ''
+        billProductId: null
     });
 
     const initialProducts: Product[] = [
@@ -67,7 +37,7 @@ const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
     const backendServer = 'http://localhost:8080/'
     const navigate = useNavigate();
 
-    const removeProduct = (id: string) => {
+    const removeProduct = (id: string |null) => {
         setProducts(prev => prev.filter(p => p.pid !== id));
     };
     const subtotal = products.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -103,7 +73,7 @@ const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
     const handleNumericInput = (
         e: React.ChangeEvent<HTMLInputElement>,
-        id: string,
+        id: string | null,
         field: keyof Product
     ) => {
         const rawValue = e.target.value.replace(/₹\s?/g, '');
@@ -118,7 +88,7 @@ const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         }
     };
 
-    const handleNameChange = (id: string, value: string) => {
+    const handleNameChange = (id: string | null, value: string) => {
         setProducts((prev) =>
             prev.map((product) => (product.pid === id ? { ...product, name: value } : product))
         );

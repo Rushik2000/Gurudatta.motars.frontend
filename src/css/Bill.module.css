@@ -119,9 +119,9 @@
 .billtable {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1rem;
   color: black;
   align-items: center;
+  table-layout: fixed;
 }
 
 .billtable th,
@@ -198,6 +198,7 @@
 .addrow {
   text-align: right;
   margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .addrow button {
@@ -469,4 +470,45 @@ input[type="text"] {
 .dropdown li:hover {
   background-color: #f0f0f0;
   /* Highlight item on hover */
+}
+
+.billFooter {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.creatorleft1 {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  color: red;
+  margin-top: 50px;
+}
+
+.creatorleft1 label {
+  margin-top: 4px;
+  position: absolute; /* IMPORTANT */
+}
+
+.creatorleft1 input {
+  padding: 6px 10px;
+  font-size: 14px;
+  width: 180px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 80px;
+}
+
+.billsummary1 {
+  text-align: right;
+  font-size: 1.1rem;
+  color: green;
+}
+
+.billsummary1 strong {
+  font-size: 1.5rem;
 }
