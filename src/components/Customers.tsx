@@ -147,11 +147,15 @@ const Customer: React.FC = () => {
   return (
     <div className={styles.main}>
       <div className={styles.backWrapper}>
-        <button className={styles.backBtn}
-          onClick={() => navigate('/')}>
+        <h2>🕉️गुरुदत्त मोटर्स & स्पेअर्स🕉️</h2>
+        <button
+          className={styles.backBtn}
+          onClick={() => navigate('/')}
+        >
           <img src={closeIcon} alt="back" />
         </button>
       </div>
+
       <div className={styles.customercontainer}>
         <div className={styles.custformsection}>
           <h2>Add / Edit Customer</h2>

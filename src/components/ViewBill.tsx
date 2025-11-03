@@ -1,5 +1,6 @@
 import styles from '../css/Bill.module.css';
 import type { BillProduct, Customer } from '../types/types';
+import closeIcon from '../assets/closebtn.png'
 
 type ViewBillProps = {
     foundCustomer: Customer | undefined;
@@ -23,9 +24,11 @@ const ViewBill: React.FC<ViewBillProps> = ({
             <div className={styles.customerdetails}>
                 <div className={styles.billheader}>
                     <h5>🕉️गुरुदत्त मोटर्स & स्पेअर्स🕉️</h5>
-                    <button
-                        className={styles.closebutton}
-                        onClick={closeButtonHandler}>Close X</button>
+                    <div className={styles.closeimg}>
+                        <button className={styles.closebutton} onClick={closeButtonHandler}>
+                            <img src={closeIcon} alt="close" />
+                        </button>
+                    </div>
                 </div>
                 <div className={styles.customerform}>
                     <input

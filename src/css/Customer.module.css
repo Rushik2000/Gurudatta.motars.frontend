@@ -438,13 +438,24 @@
 }
 
 .backWrapper {
-    display: flex;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
     width: 100%;
     margin-bottom: 10px;
 }
 
+.backWrapper h2 {
+    grid-column: 2;
+    text-align: center;
+    margin: 0;
+    color: green;
+}
+
 .backBtn {
+    grid-column: 3 / 4;
+    justify-self: end;
+
     margin-right: 10px;
     margin-top: 7px;
     background: none;
@@ -466,11 +477,7 @@
     opacity: 0.8;
 }
 
-.backBtn:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
+.backBtn:focus,
 .backBtn:active {
     outline: none !important;
     box-shadow: none !important;
