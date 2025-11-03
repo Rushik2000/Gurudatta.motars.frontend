@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import styles from '../css/Bill.module.css'
 import type { Product, BillProduct, Customer, Admin } from '../types/types';
+import closeIcon from '../assets/closebtn.png'
 
 interface BillProps {
     setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
@@ -37,7 +38,7 @@ const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
     const backendServer = 'http://localhost:8080/'
     const navigate = useNavigate();
 
-    const removeProduct = (id: string |null) => {
+    const removeProduct = (id: string | null) => {
         setProducts(prev => prev.filter(p => p.pid !== id));
     };
     const subtotal = products.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -278,9 +279,11 @@ const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
             <div className={styles.customerdetails}>
                 <div className={styles.billheader}>
                     <h5>🕉️गुरुदत्त मोटर्स & स्पेअर्स🕉️</h5>
-                    <button
-                        className={styles.closebutton}
-                        onClick={closeButtonHandler}>Close X</button>
+                    <div className={styles.closeimg}>
+                        <button className={styles.closebutton} onClick={closeButtonHandler}>
+                            <img src={closeIcon} alt="close" />
+                        </button>
+                    </div>
                 </div>
                 <div className={styles.customerform}>
                     <input

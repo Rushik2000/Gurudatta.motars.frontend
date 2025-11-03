@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styles from '../css/Customer.module.css'
 import ViewBill from "./ViewBill";
-import type {BillProduct, Customer } from "../types/types";
+import type { BillProduct, Customer } from "../types/types";
+import closeIcon from '../assets/closebtn.png'
+import { useNavigate } from 'react-router-dom';
 
 const Customer: React.FC = () => {
   const [customer, setCustomer] = useState<Customer>({
-    csid : null,
+    csid: null,
     name: '',
     phone: '',
     email: '',
@@ -25,6 +27,7 @@ const Customer: React.FC = () => {
   const [searchedCustomerBills, setSearchedCustomerBills] = useState<BillProduct[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedBill, setSelectedBill] = useState<BillProduct>();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -48,7 +51,7 @@ const Customer: React.FC = () => {
       });
 
       if (!res.ok) throw new Error("Failed to save customer");
-      setCustomer({ csid: null , name: "", phone: "", email: "", address: "", billProductId: null });
+      setCustomer({ csid: null, name: "", phone: "", email: "", address: "", billProductId: null });
       alert("Customer added successfully!");
     } catch (error) {
       console.error("Error adding customer:", error);
@@ -143,6 +146,12 @@ const Customer: React.FC = () => {
 
   return (
     <div className={styles.main}>
+      <div className={styles.backWrapper}>
+        <button className={styles.backBtn}
+          onClick={() => navigate('/')}>
+          <img src={closeIcon} alt="back" />
+        </button>
+      </div>
       <div className={styles.customercontainer}>
         <div className={styles.custformsection}>
           <h2>Add / Edit Customer</h2>
@@ -279,7 +288,7 @@ const Customer: React.FC = () => {
           <ViewBill
             foundCustomer={foundCustomer}
             bill={selectedBill}
-            setShowModal = {setShowModal}
+            setShowModal={setShowModal}
           />
         )}
       </div>

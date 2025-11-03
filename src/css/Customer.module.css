@@ -7,11 +7,14 @@
     grid-column: 2;
     grid-template-columns: 1fr 2fr;
     gap: 2rem;
+    padding-top: 5px;
     padding: 20px;
     background: #f3f4f6;
     /* soft gray background */
     border-radius: 12px;
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: "Inter",
+        system-ui,
+        sans-serif;
     color: #111827;
 }
 
@@ -138,10 +141,6 @@
     color: #111827;
 }
 
-.customertable thead {
-    
-}
-
 .customertable th {
     background-color: #eef2ff;
     /* soft indigo tone */
@@ -165,9 +164,9 @@
 }
 
 .tableWrapper {
-    max-height: 290px;  /* enough height for 4 rows */
-    overflow-y: auto;   /* scroll appears only when needed */
-    overflow-x: hidden; /* optional */
+    max-height: 290px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .tableWrapper::-webkit-scrollbar {
@@ -348,90 +347,130 @@
 }
 
 .dropdown {
-  position: fixed;
-  top: 16%;
-  width: 15%;
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  background-color: white;
-  z-index: 9999;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: none;
-  list-style-type: none;
-  margin-left: 0;
-  border-radius: 0;
-  border-color: black;
+    position: fixed;
+    top: 16%;
+    width: 15%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background-color: white;
+    z-index: 9999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    list-style-type: none;
+    margin-left: 0;
+    border-radius: 0;
+    border-color: black;
 
 }
 
 .custform input[type="text"]:focus+.dropdown {
-  display: block;
+    display: block;
 }
 
 .dropdown li {
-  font-size: 100%;
-  color: black;
-  padding: 2px;
-  cursor: pointer;
-  text-align: left;
-  padding-top: 10px;
-  padding-bottom: 10px;
+    font-size: 100%;
+    color: black;
+    padding: 2px;
+    cursor: pointer;
+    text-align: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .dropdown li:hover {
-  background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
 
 .dropdownwrapper {
-  position: relative;
-  width: 250px;
+    position: relative;
+    width: 250px;
 }
 
 .dropdownwrapperr {
-  position: relative;
-  width: 200px;
+    position: relative;
+    width: 200px;
 }
 
 .searchdropdownwrapper {
-  position: relative;
-  display: inline-block;
-  width: 250px; /* match your search input width */
+    position: relative;
+    display: inline-block;
+    width: 250px;
+    /* match your search input width */
 }
 
 .searchbox {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .searchdropdown {
-  position: absolute;
-  top: 15.2%;
-  left: 36.5%;
-  width: 20%;
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  z-index: 9999;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  border-radius: 4px;
-  border-color: black;
+    position: absolute;
+    top: 15.2%;
+    left: 36.5%;
+    width: 20%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    z-index: 9999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 4px;
+    border-color: black;
 }
 
 .searchdropdown li {
-  font-size: 14px;
-  color: #333;
-  padding: 8px 10px;
-  cursor: pointer;
-  text-align: left;
+    font-size: 14px;
+    color: #333;
+    padding: 8px 10px;
+    cursor: pointer;
+    text-align: left;
 }
 
 .searchdropdown li:hover {
-  background-color: #f3f4f6;
+    background-color: #f3f4f6;
+}
+
+.backWrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.backBtn {
+    margin-right: 10px;
+    margin-top: 7px;
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.backBtn img {
+    width: 40px;
+    height: 40px;
+    transition: 0.2s ease;
+    border: none;
+}
+
+.backBtn:hover img {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+.backBtn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.backBtn:active {
+    outline: none !important;
+    box-shadow: none !important;
 }

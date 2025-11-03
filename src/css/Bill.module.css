@@ -13,16 +13,6 @@
   margin: 0;
 }
 
-.billheader .closebutton {
-  grid-column: 3;
-  justify-self: end;
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: red;
-}
-
 .appheader {
   width: 100%;
   max-width: none;
@@ -51,6 +41,7 @@
 
 .billcontainer {
   padding: 2rem;
+  padding-top: 20px;
   width: 95%;
   margin: 0 auto;
   font-family: Arial, sans-serif;
@@ -511,4 +502,43 @@ input[type="text"] {
 
 .billsummary1 strong {
   font-size: 1.5rem;
+}
+
+.closeimg {
+  display: flex;
+  justify-content: flex-end; 
+  width: 100%;
+}
+
+.closebutton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Strong selector: applies only to THIS image */
+.closebutton > img {
+  width: 40px;
+  height: 50px;
+  object-fit: contain;
+  display: block;
+  opacity: 0.85;
+  transition: 0.2s ease;
+}
+
+.closebutton:hover > img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.closebutton:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.closebutton:active {
+  outline: none;
+  box-shadow: none;
 }
