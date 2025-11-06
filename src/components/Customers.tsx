@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styles from '../css/Customer.module.css'
-import ViewBill from "./ViewBill";
+import { ViewBill } from "./ViewBill";
 import type { BillProduct, Customer } from "../types/types";
 import closeIcon from '../assets/closebtn.png'
 import { useNavigate } from 'react-router-dom';
 
-const Customer: React.FC = () => {
+export const Customers: React.FC = () => {
   const [customer, setCustomer] = useState<Customer>({
     csid: null,
     name: '',
@@ -299,5 +299,3 @@ const Customer: React.FC = () => {
     </div>
   );
 };
-
-export default Customer;

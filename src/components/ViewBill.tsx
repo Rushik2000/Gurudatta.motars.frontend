@@ -8,7 +8,7 @@ type ViewBillProps = {
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ViewBill: React.FC<ViewBillProps> = ({
+export const ViewBill: React.FC<ViewBillProps> = ({
     foundCustomer,
     bill,
     setShowModal,
@@ -149,5 +149,3 @@ const ViewBill: React.FC<ViewBillProps> = ({
         </div>
     );
 };
-
-export default ViewBill;

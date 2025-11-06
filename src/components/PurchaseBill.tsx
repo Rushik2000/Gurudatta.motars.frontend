@@ -1,48 +1,43 @@
-import { useState, useEffect, useRef } from 'react';
-import { v4 as uuid } from 'uuid';
-import { useNavigate } from 'react-router-dom';
 import styles from '../css/Bill.module.css'
-import type { Product, BillProduct, Customer, Admin } from '../types/types';
 import closeIcon from '../assets/closebtn.png'
+import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import type { Supplier, Product, Admin, BillProduct } from '../types/types';
+import { v4 as uuid } from 'uuid';
 
 interface BillProps {
     setRefreshKey: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
+export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
-    const [customer, setCustomer] = useState<Customer>({
-        csid: null,
+    const [supplier, setSupplier] = useState<Supplier>({
+        sid: null,
         name: '',
         phone: '',
         email: '',
         address: '',
-        billProductId: null
+        billId: null
     });
-
     const initialProducts: Product[] = [
-        { pid: uuid(), name: '', price: 0, quantity: 1 }
+        { pid: null, name: '', price: 0, quantity: 1 }
     ];
-
     const [products, setProducts] = useState<Product[]>(initialProducts);
-    const [loading, setLoading] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [createdBy, setCreatedBy] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [customerResults, setCustomerResults] = useState<Customer[]>([]);
-    const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
-    const [showAdminDropdown, setShowAdminDropdown] = useState(false);
-    const [date, setDate] = useState('');
-    const [admins, setAdmins] = useState([]);
-    const dropdownRef = useRef<HTMLUListElement | null>(null);
-    const backendServer = 'http://localhost:8080/'
     const navigate = useNavigate();
+    const backendServer = 'http://localhost:8080/';
+    const [searchTerm, setSearchTerm] = useState("");
+    const [supplierResults, setSupplierResults] = useState<Supplier[]>([]);
+    const [showSupplierDropdown, setShowSupplierDropdown] = useState(false);
+    const [date, setDate] = useState('');
+    const [createdBy, setCreatedBy] = useState("");
+    const [admins, setAdmins] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [showAdminDropdown, setShowAdminDropdown] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
-    const removeProduct = (id: string | null) => {
-        setProducts(prev => prev.filter(p => p.pid !== id));
-    };
     const subtotal = products.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    const tax = subtotal * 0.1;
+    //const tax = subtotal * 0.1;
+    const tax = 0;
     const total = subtotal + tax;
 
     useEffect(() => {
@@ -53,74 +48,25 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         updateDate();
     }, []);
 
-    const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        if (name === 'name') {
-            setSearchTerm(value);
+    useEffect(() => {
+        if (searchTerm.length < 2) {
+            setSupplierResults([]);
+            setShowSupplierDropdown(false);
+            return;
         }
-        setCustomer(prev => ({ ...prev, [name]: value }));
-    };
 
-    const addNewRow = () => {
-        const newProduct: Product = {
-            pid: uuid(),
-            name: '',
-            price: 0,
-            quantity: 1,
-        };
-        setProducts(prev => [...prev, newProduct]);
-    };
+        const delayDebounce = setTimeout(() => {
+            fetch(backendServer + `search?name=${searchTerm}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setSupplierResults(data);
+                    setShowSupplierDropdown(true);
+                })
+                .catch((err) => console.error("Search failed", err));
+        }, 400);
 
-    const handleNumericInput = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        id: string | null,
-        field: keyof Product
-    ) => {
-        const rawValue = e.target.value.replace(/₹\s?/g, '');
-        const numericValue = rawValue === '' ? 0 : Number(rawValue);
-
-        if (!isNaN(numericValue)) {
-            setProducts(prev =>
-                prev.map(product =>
-                    product.pid === id ? { ...product, [field]: numericValue } : product
-                )
-            );
-        }
-    };
-
-    const handleNameChange = (id: string | null, value: string) => {
-        setProducts((prev) =>
-            prev.map((product) => (product.pid === id ? { ...product, name: value } : product))
-        );
-    };
-
-    const handlePrint = () => {
-        setShowModal(false);
-        setTimeout(() => {
-            window.print();
-        }, 500);
-    };
-
-    const handleCustomerAdd = async (billProductId: string | null) => {
-        try {
-            const updatedCustomer = {
-                ...customer,
-                csid: customer.csid,
-                billProductId: billProductId,
-            };
-            const response = await fetch(backendServer + "customer", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedCustomer),
-            });
-            const customerRes = await response.json();
-            setCustomer(customerRes);
-        } catch (error) {
-            console.error("Error saving data: ", error);
-        }
-    };
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm]);
 
     const fetchAdmins = async () => {
         try {
@@ -143,58 +89,91 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         setShowAdminDropdown(false);
     };
 
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-                setShowAdminDropdown(false);
-            }
+    const addNewRow = () => {
+        const newProduct: Product = {
+            pid: uuid(),
+            name: '',
+            price: 0,
+            quantity: 1,
         };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    const autoFillCustomerDetail = (cust: Customer) => {
-        setSearchTerm(cust.name);
-        const newCustomer: Customer = {
-            csid: cust.csid,
-            name: cust.name,
-            phone: cust.phone,
-            email: cust.email,
-            address: cust.address,
-            billProductId: cust.billProductId
-        }
-        setCustomer(newCustomer);
-        setShowCustomerDropdown(false);
+        setProducts(prev => [...prev, newProduct]);
     };
 
-    useEffect(() => {
-    }, [setSearchTerm]);
-
-    useEffect(() => {
-        if (searchTerm.length < 2) {
-            setCustomerResults([]);
-            setShowCustomerDropdown(false);
-            return;
+    const handleSupplierAdd = async (billId: string | null) => {
+        try {
+            const updatedSupplier = {
+                ...supplier,
+                sid: supplier.sid,
+                billId: billId,
+            };
+            const response = await fetch(backendServer + "supplier", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedSupplier),
+            });
+            const supplierRes = await response.json();
+            setSupplier(supplierRes);
+        } catch (error) {
+            console.error("Error saving data: ", error);
         }
+    };
 
-        const delayDebounce = setTimeout(() => {
-            fetch(backendServer + `search?name=${searchTerm}`)
-                .then((res) => res.json())
-                .then((data) => {
-                    setCustomerResults(data);
-                    setShowCustomerDropdown(true);
-                })
-                .catch((err) => console.error("Search failed", err));
-        }, 400);
+    const handleSupplierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        if (name === 'name') {
+            setSearchTerm(value);
+        }
+        setSupplier(prev => ({ ...prev, [name]: value }));
+    };
 
-        return () => clearTimeout(delayDebounce);
-    }, [searchTerm]);
+    const autoFillSupplierDetail = (s: Supplier) => {
+        setSearchTerm(s.name);
+        const newSupplier: Supplier = {
+            sid: s.sid,
+            name: s.name,
+            phone: s.phone,
+            email: s.email,
+            address: s.address,
+            billId: s.billId
+        }
+        setSupplier(newSupplier);
+        setShowSupplierDropdown(false);
+    };
+
+    const handleNameChange = (id: string | null, value: string) => {
+        setProducts((prev) =>
+            prev.map((product) => (product.pid === id ? { ...product, name: value } : product))
+        );
+    };
+
+    const handleNumericInput = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        id: string | null,
+        field: keyof Product
+    ) => {
+        const rawValue = e.target.value.replace(/₹\s?/g, '');
+        const numericValue = rawValue === '' ? 0 : Number(rawValue);
+
+        if (!isNaN(numericValue)) {
+            setProducts(prev =>
+                prev.map(product =>
+                    product.pid === id ? { ...product, [field]: numericValue } : product
+                )
+            );
+        }
+    };
+
+    const removeProduct = (id: string | null) => {
+        setProducts(prev => prev.filter(p => p.pid !== id));
+    };
 
     const handleProductDataAdd = async (): Promise<string | null> => {
         try {
-            const bpid = customer.billProductId ? customer.billProductId : '';
+            const bid = supplier.billId ? supplier.billId : '';
             const billProduct: BillProduct = {
-                bpid: bpid,
+                bpid: bid,
                 date: date,
                 billBy: createdBy,
                 productList: products,
@@ -225,9 +204,9 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
     const handleGenerateBill = async () => {
         try {
             setLoading(true);
-            const billProductId = await handleProductDataAdd();
-            if (!billProductId) throw new Error("Failed to save bill product.");
-            handleCustomerAdd(billProductId);
+            const billId = await handleProductDataAdd();
+            if (!billId) throw new Error("Failed to save bill product.");
+            handleSupplierAdd(billId);
             setShowModal(true);
         } catch (error) {
             console.error("Error generating bill:", error);
@@ -237,43 +216,49 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         }
     };
 
-    const closeButtonHandler = () => {
-        if (customer.name && customer.csid && total !== 0) {
-            handleCustomerAdd(null);
-        }
-        navigate('/');
-    }
+    const handlePrint = () => {
+        setShowModal(false);
+        setTimeout(() => {
+            window.print();
+        }, 500);
+    };
 
     const addNewBillBtnHandler = async () => {
-        // Making current customer billProductId as null so it can add new bill in the future with new id
-        const customerParam = {
-            ...customer,
-            csid: customer.csid,
-            billProductId: null,
+        // Making current supplier billId as null so it can add new bill in the future with new id
+        const supplierParam = {
+            ...supplier,
+            csid: supplier.sid,
+            billId: null,
         };
 
-        const response = await fetch(backendServer + "customer", {
+        const response = await fetch(backendServer + "supplier", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(customerParam),
+            body: JSON.stringify(supplierParam),
         });
 
-        const customerRes = await response.json();
-        setCustomer(customerRes);
+        const supplierRes = await response.json();
+        setSupplier(supplierRes);
 
         // popup model will disappear
         setShowModal(false)
 
         // ✅ Reset whole Bill component (new bill)
         setRefreshKey(prev => prev + 1);
+    }
 
+    const closeButtonHandler = () => {
+        if (supplier.name && supplier.sid && total !== 0) {
+            handleSupplierAdd(null);
+        }
+        navigate('/');
     }
 
     return (
         <div className={styles.billcontainer}>
-            {/* Customer Details Section */}
+            {/* Supplier Details Section */}
             <div className={styles.customerdetails}>
                 <div className={styles.billheader}>
                     <h5>🕉️गुरुदत्त मोटर्स & स्पेअर्स🕉️</h5>
@@ -287,21 +272,21 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                     <input
                         type="text"
                         name="name"
-                        placeholder="👨‍🏭Customer Name"
-                        value={customer.name}
-                        onChange={handleCustomerChange}
+                        placeholder="👨‍🏭Supplier Name"
+                        value={supplier.name}
+                        onChange={handleSupplierChange}
                         onFocus={() => {
-                            if (customerResults.length > 0) setShowCustomerDropdown(true);
+                            if (supplierResults.length > 0) setShowSupplierDropdown(true);
                         }}
                     />
 
-                    {showCustomerDropdown && customerResults.length > 0 && (
+                    {showSupplierDropdown && supplierResults.length > 0 && (
                         <ul className={styles.dropdown}>
-                            {customerResults.map((cust) => (
-                                <li key={cust.csid} onMouseDown={() => {
-                                    autoFillCustomerDetail(cust)
+                            {supplierResults.map((s) => (
+                                <li key={s.sid} onMouseDown={() => {
+                                    autoFillSupplierDetail(s)
                                 }}>
-                                    {cust.name}
+                                    {s.name}
                                 </li>
                             ))}
                         </ul>
@@ -311,8 +296,8 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                         type="text"
                         name="phone"
                         placeholder="📞Phone Number"
-                        value={customer.phone}
-                        onChange={handleCustomerChange}
+                        value={supplier.phone}
+                        onChange={handleSupplierChange}
                     />
                     <input
                         type="date"
@@ -326,15 +311,15 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                         type="text"
                         name="address"
                         placeholder="💼Address"
-                        value={customer.address}
-                        onChange={handleCustomerChange}
+                        value={supplier.address}
+                        onChange={handleSupplierChange}
                     />
                     <input
                         type="email"
                         name="email"
                         placeholder="📧Email"
-                        value={customer.email}
-                        onChange={handleCustomerChange}
+                        value={supplier.email}
+                        onChange={handleSupplierChange}
                     />
                 </div>
             </div>
@@ -411,8 +396,8 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
             {/* Bill Summary */}
             <div className={styles.billsummary}>
-                <p>Subtotal: ₹{subtotal}</p>
-                <p>Tax (10%): ₹{tax}</p>
+                {/*<p>Subtotal: ₹{subtotal}</p>
+                 <p>Tax (0%): ₹{tax}</p> */}
                 <p><strong>Total: ₹{total}</strong></p>
             </div>
 
@@ -427,6 +412,14 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                             readOnly
                             onClick={fetchAdmins}
                             placeholder="Select your name"
+                            onFocus={() => {
+                                if (admins.length > 0) setShowAdminDropdown(true);
+                            }}
+                            onBlur={(e) => {
+                                if(e.target.contains(e.relatedTarget)) {
+                                    setShowAdminDropdown(false);
+                                }
+                            }}
                             className={styles.nostyleinput}
                         />
                         {showAdminDropdown && (
@@ -479,4 +472,4 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
         </div>
     );
-};
+}

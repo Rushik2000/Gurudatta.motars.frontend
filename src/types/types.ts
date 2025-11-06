@@ -28,3 +28,12 @@ export interface Admin {
     aid: string | null;
     name: string;
 }
+
+export interface Supplier {
+    sid: string | null;
+    name: string,
+    phone: string,
+    email: string,
+    address: string,
+    billId: string | null;
+}

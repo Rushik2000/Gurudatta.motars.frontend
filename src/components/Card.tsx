@@ -5,7 +5,7 @@ interface Props {
     title: string;
     imgPath: string
 }
- const Card: React.FC<Props> = ({ title, imgPath }) => {
+ export const Card: React.FC<Props> = ({ title, imgPath }) => {
   const navigate = useNavigate()
 
   const handleClick = (title: string) => {
@@ -21,5 +21,3 @@ interface Props {
     </div>
   )
 }
-
-export default Card;

@@ -25,6 +25,7 @@
 .logo {
   height: 28em;
   padding: 15px;
+  padding-bottom: 40px;
   margin-left: 40px;
   will-change: filter;
   transition: filter 300ms;
