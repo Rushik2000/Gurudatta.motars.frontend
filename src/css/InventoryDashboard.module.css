@@ -13,7 +13,7 @@ padding: 20px;
 border-right: 1px solid #e5e7eb;
 display: flex;
 flex-direction: column;
-gap: 12px;
+gap: 25px;
 border-radius: 10px;
 }
 
@@ -23,7 +23,7 @@ padding: 12px;
 background: #ffffff;
 border: 1px solid #d1d5db;
 border-radius: 8px;
-text-align: left;
+text-align: center;
 font-size: 0.95rem;
 cursor: pointer;
 transition: 0.2s ease;

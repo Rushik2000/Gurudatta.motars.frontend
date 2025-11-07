@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import styles from '../css/InventoryDashboard.module.css';
-import { PurchaseWrapper } from './helper/PurchaseWrapper';
+import { PurchaseWrapper } from '../helper/PurchaseWrapper';
+import { PurchaseHistory } from './PurchaseHistory'
+import { ViewProducts } from './ViewProducts'
+import { UpdatePurchaseOrProduct } from './UpdatePurchaseOrProduct';
 
 export const InventoryDashboard = () => {
     const [activeTab, setActiveTab] = useState('purchaseBill');
@@ -9,19 +12,15 @@ export const InventoryDashboard = () => {
         switch (activeTab) {
             case 'purchaseBill':
                 return <PurchaseWrapper />;
-            
 
             case 'purchaseHistory':
                 return <PurchaseHistory />;
 
-
             case 'viewProducts':
                 return <ViewProducts />;
 
-
             case 'updateProduct':
-                return <UpdateProduct />;
-
+                return <UpdatePurchaseOrProduct />;
 
             default:
                 return null;
@@ -39,6 +38,12 @@ export const InventoryDashboard = () => {
                     Purchase Bill
                 </button>
 
+                <button
+                    className={`${styles.menuBtn} ${activeTab === 'updateProduct' ? styles.active : ''}`}
+                    onClick={() => setActiveTab('updateProduct')}
+                >
+                    Update Purchase/Product Info
+                </button>
 
                 <button
                     className={`${styles.menuBtn} ${activeTab === 'purchaseHistory' ? styles.active : ''}`}
@@ -55,13 +60,6 @@ export const InventoryDashboard = () => {
                     View Products
                 </button>
 
-
-                <button
-                    className={`${styles.menuBtn} ${activeTab === 'updateProduct' ? styles.active : ''}`}
-                    onClick={() => setActiveTab('updateProduct')}
-                >
-                    Update Product Info
-                </button>
             </div>
 
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PurchaseBill } from "../PurchaseBill";
+import { PurchaseBill } from "../components/PurchaseBill";
 
 export const PurchaseWrapper = () => {
   const [refreshKey, setRefreshKey] = useState(0);

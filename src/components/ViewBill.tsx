@@ -1,15 +1,15 @@
 import styles from '../css/Bill.module.css';
-import type { BillProduct, Customer } from '../types/types';
+import type { BillProduct, Customer, Supplier } from '../types/types';
 import closeIcon from '../assets/closebtn.png'
 
 type ViewBillProps = {
-    foundCustomer: Customer | undefined;
+    found: Customer | Supplier | undefined;
     bill: BillProduct | undefined;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ViewBill: React.FC<ViewBillProps> = ({
-    foundCustomer,
+    found,
     bill,
     setShowModal,
 }: ViewBillProps) => {
@@ -35,7 +35,7 @@ export const ViewBill: React.FC<ViewBillProps> = ({
                         type="text"
                         name="name"
                         placeholder="Customer Name"
-                        value={foundCustomer?.name}
+                        value={found?.name}
                         readOnly
                     />
 
@@ -43,7 +43,7 @@ export const ViewBill: React.FC<ViewBillProps> = ({
                         type="text"
                         name="phone"
                         placeholder="Phone Number"
-                        value={foundCustomer?.phone}
+                        value={found?.phone}
                         readOnly
                     />
                     <input
@@ -58,14 +58,14 @@ export const ViewBill: React.FC<ViewBillProps> = ({
                         type="text"
                         name="address"
                         placeholder="Address"
-                        value={foundCustomer?.address}
+                        value={found?.address}
                         readOnly
                     />
                     <input
                         type="email"
                         name="email"
                         placeholder="Email"
-                        value={foundCustomer?.email}
+                        value={found?.email}
                         readOnly
                     />
                 </div>

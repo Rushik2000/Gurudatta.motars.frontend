@@ -56,7 +56,7 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
         }
 
         const delayDebounce = setTimeout(() => {
-            fetch(backendServer + `search?name=${searchTerm}`)
+            fetch(backendServer + `searchSupplier?name=${searchTerm}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setSupplierResults(data);
@@ -449,7 +449,7 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
                         disabled={loading || createdBy.trim() === "" || total === 0}
                         className={styles.generatebillbtn}
                     >
-                        {loading ? "Generating..." : "🧾 Generate Bill"}
+                        {loading ? "Generating..." : "🧾 Generate Purchase"}
                     </button>
                 </div>
             </div>
@@ -457,7 +457,7 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
             {showModal && (
                 <div className={styles.modaloverlay}>
                     <div className={styles.modalcontent}>
-                        <h2>✅ Bill Generated Successfully</h2>
+                        <h2>✅ Purchase Bill Generated Successfully</h2>
                         <div className={styles.modalactions}>
                             <button onClick={() => setShowModal(false)} className={styles.continuebtn}>Continue🔙</button>
                             <button onClick={handlePrint} className={styles.printbtn}>🖨️ Print</button>

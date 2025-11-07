@@ -178,7 +178,7 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         }
 
         const delayDebounce = setTimeout(() => {
-            fetch(backendServer + `search?name=${searchTerm}`)
+            fetch(backendServer + `searchCustomer?name=${searchTerm}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setCustomerResults(data);

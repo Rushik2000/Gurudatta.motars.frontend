@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bill } from "../Bill";
+import { Bill } from "../components/Bill";
 
 export const BillWrapper = () => {
   const [refreshKey, setRefreshKey] = useState(0);

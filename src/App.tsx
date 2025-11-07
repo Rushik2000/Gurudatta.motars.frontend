@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { BillWrapper } from './components/helper/BillWrapper'
+import { BillWrapper } from './helper/BillWrapper'
 import { Dashboard } from './components/Dashboard'
 import { Customers } from './components/Customers'
 import { InventoryDashboard } from './components/InventoryDashboard'

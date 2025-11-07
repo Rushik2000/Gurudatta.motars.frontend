@@ -73,7 +73,7 @@ export const Customers: React.FC = () => {
       }
 
       const delayDebounce = setTimeout(() => {
-        fetch(backendServer + `search?name=${historySearchTerm}`)
+        fetch(backendServer + `searchCustomer?name=${historySearchTerm}`)
           .then((res) => res.json())
           .then((data) => {
             setSearchCustomerResults(data);
@@ -97,7 +97,7 @@ export const Customers: React.FC = () => {
       }
 
       const delayDebounce = setTimeout(() => {
-        fetch(backendServer + `search?name=${searchTerm}`)
+        fetch(backendServer + `searchCustomer?name=${searchTerm}`)
           .then((res) => res.json())
           .then((data) => {
             setCustomerResults(data);
@@ -290,7 +290,7 @@ export const Customers: React.FC = () => {
       <div className={styles.billView}>
         {showModal && (
           <ViewBill
-            foundCustomer={foundCustomer}
+            found={foundCustomer}
             bill={selectedBill}
             setShowModal={setShowModal}
           />
