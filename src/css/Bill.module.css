@@ -148,26 +148,30 @@
 }
 
 .tableContainer {
-    width: 100%;
+  overflow: visible;
+  position: relative;
+  width: 100%;
 }
 
 .tableBodyWrapper {
-    max-height: 310px;
-    overflow-y: auto;
-    overflow-x: hidden;
+  max-height: 310px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  overflow: visible;
 }
 
 .tableBodyWrapper::-webkit-scrollbar {
-    width: 10px;
+  width: 10px;
 }
 
 .tableBodyWrapper::-webkit-scrollbar-thumb {
-    background: #b5b5b5;
-    border-radius: 10px;
+  background: #b5b5b5;
+  border-radius: 10px;
 }
 
 .tableBodyWrapper::-webkit-scrollbar-thumb:hover {
-    background: #8c8c8c;
+  background: #8c8c8c;
 }
 
 .nostyleinput {
@@ -465,7 +469,7 @@ input[type="text"] {
 
 .billFooter {
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
   align-items: start;
   margin-top: 20px;
@@ -482,7 +486,8 @@ input[type="text"] {
 
 .creatorleft1 label {
   margin-top: 4px;
-  position: absolute; /* IMPORTANT */
+  position: absolute;
+  /* IMPORTANT */
 }
 
 .creatorleft1 input {
@@ -506,7 +511,7 @@ input[type="text"] {
 
 .closeimg {
   display: flex;
-  justify-content: flex-end; 
+  justify-content: flex-end;
   width: 100%;
 }
 
@@ -519,7 +524,7 @@ input[type="text"] {
 }
 
 /* Strong selector: applies only to THIS image */
-.closebutton > img {
+.closebutton>img {
   width: 40px;
   height: 50px;
   object-fit: contain;
@@ -528,7 +533,7 @@ input[type="text"] {
   transition: 0.2s ease;
 }
 
-.closebutton:hover > img {
+.closebutton:hover>img {
   opacity: 1;
   transform: scale(1.05);
 }
@@ -541,4 +546,23 @@ input[type="text"] {
 .closebutton:active {
   outline: none;
   box-shadow: none;
+}
+
+.dropdownWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.productDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 276px;
+  max-height: 180px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 9999;
+  list-style: none;
+  padding: 0;
 }
