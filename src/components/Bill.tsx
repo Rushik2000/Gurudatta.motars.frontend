@@ -21,7 +21,7 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
     });
 
     const initialProducts: Product[] = [
-        { pid: uuid(), name: '', price: 0, quantity: 1 }
+        { pid: null, name: '', price: 0, quantity: 1 }
     ];
 
     const [products, setProducts] = useState<Product[]>(initialProducts);
