@@ -60,10 +60,14 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
     const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+        let updatedValue = value;
+        if (name === "phone") {
+            updatedValue = value.replace(/\D/g, "");
+        }
         if (name === 'name') {
             setSearchTerm(value);
         }
-        setCustomer(prev => ({ ...prev, [name]: value }));
+        setCustomer(prev => ({ ...prev, [name]: updatedValue  }));
     };
 
     const addNewRow = () => {
@@ -385,6 +389,7 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                     <input
                         type="text"
                         name="phone"
+                        maxLength={10}
                         placeholder="📞Phone Number"
                         value={customer.phone}
                         onChange={handleCustomerChange}

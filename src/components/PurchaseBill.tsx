@@ -150,10 +150,14 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
     const handleSupplierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+        let updatedValue = value;
+        if (name === "phone") {
+            updatedValue = value.replace(/\D/g, "");
+        }
         if (name === 'name') {
             setSearchTerm(value);
         }
-        setSupplier(prev => ({ ...prev, [name]: value }));
+        setSupplier(prev => ({ ...prev, [name]: updatedValue }));
     };
 
     const autoFillSupplierDetail = (s: Supplier) => {
@@ -372,6 +376,7 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
                     <input
                         type="text"
                         name="phone"
+                        maxLength={10}
                         placeholder="📞Phone Number"
                         value={supplier.phone}
                         onChange={handleSupplierChange}
