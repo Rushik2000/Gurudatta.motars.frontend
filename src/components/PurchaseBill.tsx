@@ -28,12 +28,9 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [productSearchTerm, setProductSearchTerm] = useState("");
     const [activeDropdownRow, setActiveDropdownRow] = useState<number | null>(null);
-
     const [supplierResults, setSupplierResults] = useState<Supplier[]>([]);
     const [productResults, setProductResults] = useState<Product[]>([]);
     const [showSupplierDropdown, setShowSupplierDropdown] = useState(false);
-    const [showProductDropdown, setShowProductDropdown] = useState(false);
-
     const [date, setDate] = useState('');
     const [createdBy, setCreatedBy] = useState("");
     const [admins, setAdmins] = useState([]);
@@ -76,13 +73,11 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
     useEffect(() => {
         if (!activeDropdownRow && activeDropdownRow !== 0) {
             setProductResults([]);
-            setShowProductDropdown(false);
             return;
         }
 
         if (productSearchTerm.trim().length < 2) {
             setProductResults([]);
-            setShowProductDropdown(false);
             return;
         }
 
@@ -91,7 +86,6 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
                 .then((res) => res.json())
                 .then((data) => {
                     setProductResults(data);
-                    setShowProductDropdown(true);
                 })
                 .catch((err) => console.error("Search failed", err));
         }, 350);
@@ -128,11 +122,9 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
             quantity: 1,
         };
         setProducts(prev => [...prev, newProduct]);
-
         setActiveDropdownRow(null);
         setProductResults([]);
         setProductSearchTerm('');
-        setShowProductDropdown(false);
     };
 
     const handleSupplierAdd = async (billId: string | null) => {
@@ -179,19 +171,14 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
     };
 
     const autoFillProductDetail = (rowIndex: number, p: Product) => {
-        if (p.quantity == 0) {
-            alert(p.name + ' quantity is 0');
-        }
         setProducts(prev =>
             prev.map((prod, idx) =>
                 idx === rowIndex ? { ...prod, pid: p.pid, name: p.name, price: p.price ?? 0, quantity: p.quantity >= 1 ? 1 : 0 } : prod
             )
         );
-
         setProductSearchTerm('');
         setProductResults([]);
         setActiveDropdownRow(null);
-        setShowProductDropdown(false);
     }
 
     const handleNameChange = (rowIndex: number, value: string) => {
@@ -206,7 +193,6 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
             setProductSearchTerm('');
             setProductResults([]);
             setActiveDropdownRow(null);
-            setShowProductDropdown(false);
         }
     };
 

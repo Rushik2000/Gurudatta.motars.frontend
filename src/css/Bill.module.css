@@ -566,3 +566,17 @@ input[type="text"] {
   list-style: none;
   padding: 0;
 }
+
+.productDropdown1 {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 316px;
+  max-height: 180px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 9999;
+  list-style: none;
+  padding: 0;
+}

@@ -38,6 +38,11 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
     const backendServer = 'http://localhost:8080/'
     const navigate = useNavigate();
 
+    const [productSearchTerm, setProductSearchTerm] = useState("");
+    const [productResults, setProductResults] = useState<Product[]>([]);
+    const [activeDropdownRow, setActiveDropdownRow] = useState<number | null>(null);
+    const productDropdownRef = useRef<HTMLUListElement | null>(null);
+
     const removeProduct = (id: string | null) => {
         setProducts(prev => prev.filter(p => p.pid !== id));
     };
@@ -69,6 +74,9 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
             quantity: 1,
         };
         setProducts(prev => [...prev, newProduct]);
+        setActiveDropdownRow(null);
+        setProductResults([]);
+        setProductSearchTerm('');
     };
 
     const handleNumericInput = (
@@ -88,10 +96,19 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         }
     };
 
-    const handleNameChange = (id: string | null, value: string) => {
+    const handleNameChange = (rowIndex: number, value: string) => {
         setProducts((prev) =>
-            prev.map((product) => (product.pid === id ? { ...product, name: value } : product))
+            prev.map((product, idx) => (idx === rowIndex ? { ...product, name: value } : product))
         );
+
+        if (value.trim().length >= 2) {
+            setProductSearchTerm(value);
+            setActiveDropdownRow(rowIndex);
+        } else {
+            setProductSearchTerm('');
+            setProductResults([]);
+            setActiveDropdownRow(null);
+        }
     };
 
     const handlePrint = () => {
@@ -148,6 +165,9 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
                 setShowAdminDropdown(false);
             }
+            if (productDropdownRef.current && !productDropdownRef.current.contains(e.target as Node)) {
+                setActiveDropdownRow(null);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -178,7 +198,7 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         }
 
         const delayDebounce = setTimeout(() => {
-            fetch(backendServer + `searchCustomer?name=${searchTerm}`)
+            fetch(backendServer + `searchCustomer?name=${encodeURIComponent(searchTerm)}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setCustomerResults(data);
@@ -190,14 +210,71 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         return () => clearTimeout(delayDebounce);
     }, [searchTerm]);
 
-    const handleProductDataAdd = async (): Promise<string | null> => {
+    useEffect(() => {
+        if (!activeDropdownRow && activeDropdownRow !== 0) {
+            setProductResults([]);
+            return;
+        }
+
+        if (productSearchTerm.trim().length < 2) {
+            setProductResults([]);
+            return;
+        }
+
+        const delayDebounce = setTimeout(() => {
+            fetch(backendServer + `searchProduct?name=${encodeURIComponent(productSearchTerm)}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setProductResults(data);
+                })
+                .catch((err) => console.error("Search failed", err));
+        }, 350);
+
+        return () => clearTimeout(delayDebounce);
+    }, [productSearchTerm, activeDropdownRow]);
+
+    const autoFillProductDetail = (rowIndex: number, p: Product) => {
+        if (p.quantity == 0) {
+            alert(p.name + ' quantity is 0');
+        }
+        setProducts(prev =>
+            prev.map((prod, idx) =>
+                idx === rowIndex ? { ...prod, pid: p.pid, name: p.name, price: p.price ?? 0, quantity: p.quantity >= 1 ? 1 : 0 } : prod
+            )
+        );
+        setProductSearchTerm('');
+        setProductResults([]);
+        setActiveDropdownRow(null);
+    }
+
+    const handleProductRemoveFromDB = async (): Promise<Product[] | null> => {
+        try {
+            const response = await fetch(backendServer + "product", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(products),
+            });
+
+            if (!response.ok) throw new Error("Failed to delete Product");
+
+            const savedData = await response.json();
+            return savedData;
+        } catch (error) {
+            console.error("Error saving bill product:", error);
+            return null;
+        }
+    }
+
+    const handleProductDataAdd = async (prodData: Product[]): Promise<string | null> => {
         try {
             const bpid = customer.billProductId ? customer.billProductId : '';
             const billProduct: BillProduct = {
                 bpid: bpid,
                 date: date,
                 billBy: createdBy,
-                productList: products,
+                productList: prodData,
                 subtotal: subtotal,
                 total: total,
                 tax: tax
@@ -225,7 +302,11 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
     const handleGenerateBill = async () => {
         try {
             setLoading(true);
-            const billProductId = await handleProductDataAdd();
+            const prodData = await handleProductRemoveFromDB();
+            if (!prodData) {
+                throw new Error("No products returned!");
+            }
+            const billProductId = await handleProductDataAdd(prodData);
             if (!billProductId) throw new Error("Failed to save bill product.");
             handleCustomerAdd(billProductId);
             setShowModal(true);
@@ -245,7 +326,6 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
     }
 
     const addNewBillBtnHandler = async () => {
-        // Making current customer billProductId as null so it can add new bill in the future with new id
         const customerParam = {
             ...customer,
             csid: customer.csid,
@@ -262,18 +342,13 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
 
         const customerRes = await response.json();
         setCustomer(customerRes);
-
-        // popup model will disappear
         setShowModal(false)
-
-        // ✅ Reset whole Bill component (new bill)
         setRefreshKey(prev => prev + 1);
 
     }
 
     return (
         <div className={styles.billcontainer}>
-            {/* Customer Details Section */}
             <div className={styles.customerdetails}>
                 <div className={styles.billheader}>
                     <h5>🕉️गुरुदत्त मोटर्स & स्पेअर्स🕉️</h5>
@@ -339,7 +414,6 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                 </div>
             </div>
 
-            {/* Products Table */}
             <div className={styles.tableContainer}>
                 <table className={styles.billtable}>
                     <thead>
@@ -355,24 +429,47 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                 <div className={styles.tableBodyWrapper}>
                     <table className={styles.billtable}>
                         <tbody>
-                            {products.map(product => (
-                                <tr key={product.pid}>
-                                    {/* Product name should be a text box where i can search product name and 
-                            all the data like price and all detail should be fetched from DB, If no product result then one popup should get display
-                            to add the detail about that product and once click add that product should get added
-                            in DB and available for future use   */}
+                            {products.map((product, rowIndex) => (
+                                <tr key={product.pid ?? rowIndex}>
                                     <td>
-                                        <input
-                                            type="text"
-                                            value={product.name}
-                                            placeholder="Enter Product"
-                                            onChange={(e) => handleNameChange(product.pid, e.target.value)}
-                                            className={styles.nostyleinput}
-                                        />
+                                        <div className={styles.dropdownWrapper}>
+                                            <input
+                                                type="text"
+                                                value={product.name}
+                                                placeholder="Enter Product"
+                                                onChange={(e) => { e.stopPropagation(); handleNameChange(rowIndex, e.target.value); }}
+                                                className={styles.nostyleinput}
+                                                onFocus={(e) => {
+                                                    e.stopPropagation();
+                                                    if (product.name.trim().length >= 2) {
+                                                        setActiveDropdownRow(rowIndex);
+                                                        setProductSearchTerm(product.name);
+                                                    }
+                                                }}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+
+                                            {activeDropdownRow === rowIndex && productSearchTerm.trim().length >= 2 && productResults.length > 0 && (
+                                                <ul className={styles.productDropdown1}
+                                                    ref={productDropdownRef}
+                                                    onClick={(e) => e.stopPropagation()}>
+                                                    {productResults.map((p) => (
+                                                        <li
+                                                            key={p.pid}
+                                                            onMouseDown={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                autoFillProductDetail(rowIndex, p);
+                                                            }}
+                                                        >
+                                                            {p.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
                                     </td>
-                                    {/* Intial price will be fetched from DB but id user wants he can change a price
-                            As soon as he change the price the price must be updated In DB for that product for future use
-                            Better to use text box */}
+
                                     <td>
                                         <input
                                             type="text"
@@ -404,12 +501,10 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                 </div>
             </div>
 
-            {/* ✅ Add Row Button */}
             <div className={styles.addrow}>
                 <button onClick={addNewRow}>+ Add Row</button>
             </div>
 
-            {/* Bill Summary */}
             <div className={styles.billsummary}>
                 <p>Subtotal: ₹{subtotal}</p>
                 <p>Tax (10%): ₹{tax}</p>
@@ -468,7 +563,7 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
                         <div className={styles.modalactions}>
                             <button onClick={() => setShowModal(false)} className={styles.continuebtn}>Continue🔙</button>
                             <button onClick={handlePrint} className={styles.printbtn}>🖨️ Print</button>
-                            {/* Write new logic for new bill */}
+
                             <button onClick={addNewBillBtnHandler} className={styles.newBillbtn}>
                                 New Bill +
                             </button>
