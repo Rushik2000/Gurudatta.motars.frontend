@@ -148,11 +148,33 @@ export const PurchaseBill: React.FC<BillProps> = ({ setRefreshKey }) => {
         }
     };
 
-    const handleSupplierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checkPhoneExists = async (phone: string) => {
+        try {
+            const res = await fetch(backendServer + `supplierByPhone?phone=${phone}`);
+            const exists = await res.json();
+            return exists;
+        } catch (error) {
+            console.error("Error checking phone", error);
+            return false;
+        }
+    };
+
+    const handleSupplierChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         let updatedValue = value;
         if (name === "phone") {
-            updatedValue = value.replace(/\D/g, "");
+            const digit = value.replace(/\D/g, "");
+            updatedValue = digit;
+
+            if (digit.length === 10) {
+                const exists = await checkPhoneExists(digit);
+                if (exists) {
+                    alert(`Supplier with phone is already present.\nSupplier Name : ${exists.name} \nSupplier phone : ${exists.phone}
+                        \nAdd new number to continue😊`);
+                    setSupplier(prev => ({ ...prev, phone: "" }));
+                    return;
+                }
+            }
         }
         if (name === 'name') {
             setSearchTerm(value);

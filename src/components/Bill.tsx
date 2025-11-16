@@ -58,16 +58,39 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         updateDate();
     }, []);
 
-    const handleCustomerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checkPhoneExists = async (phone: string) => {
+        try {
+            const res = await fetch(backendServer + `customerByPhone?phone=${phone}`);
+            const exists = await res.json();
+            console.log("exists", exists)
+            return exists;
+        } catch (error) {
+            console.error("Error checking phone", error);
+            return false;
+        }
+    };
+
+    const handleCustomerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         let updatedValue = value;
         if (name === "phone") {
-            updatedValue = value.replace(/\D/g, "");
+            const digit = value.replace(/\D/g, "");
+            updatedValue = digit;
+
+            if (digit.length === 10) {
+                const exists = await checkPhoneExists(digit);
+                if (exists) {
+                    alert(`Customer with phone is already present.\nCustomer Name : ${exists.name} \nCustomer phone : ${exists.phone}
+                        \nAdd new number to continue😊`);
+                    setCustomer(prev => ({ ...prev, phone: "" }));
+                    return;
+                }
+            }
         }
         if (name === 'name') {
             setSearchTerm(value);
         }
-        setCustomer(prev => ({ ...prev, [name]: updatedValue  }));
+        setCustomer(prev => ({ ...prev, [name]: updatedValue }));
     };
 
     const addNewRow = () => {
