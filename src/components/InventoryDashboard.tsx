@@ -16,11 +16,11 @@ export const InventoryDashboard = () => {
             case 'purchaseHistory':
                 return <PurchaseHistory />;
 
-            case 'viewProducts':
-                return <ViewProducts />;
-
             case 'updateProduct':
                 return <UpdatePurchaseOrProduct />;
+
+            case 'viewProducts':
+                return <ViewProducts />;
 
             default:
                 return null;
@@ -39,25 +39,24 @@ export const InventoryDashboard = () => {
                 </button>
 
                 <button
-                    className={`${styles.menuBtn} ${activeTab === 'updateProduct' ? styles.active : ''}`}
-                    onClick={() => setActiveTab('updateProduct')}
-                >
-                    Update Purchase/Product Info
-                </button>
-
-                <button
                     className={`${styles.menuBtn} ${activeTab === 'purchaseHistory' ? styles.active : ''}`}
                     onClick={() => setActiveTab('purchaseHistory')}
                 >
                     Purchase History
                 </button>
 
-
                 <button
                     className={`${styles.menuBtn} ${activeTab === 'viewProducts' ? styles.active : ''}`}
                     onClick={() => setActiveTab('viewProducts')}
                 >
                     View Products
+                </button>
+
+                <button
+                    className={`${styles.menuBtn} ${activeTab === 'updateProduct' ? styles.active : ''}`}
+                    onClick={() => setActiveTab('updateProduct')}
+                >
+                    Update Purchase/Product Info
                 </button>
 
             </div>

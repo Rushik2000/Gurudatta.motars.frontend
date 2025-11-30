@@ -62,7 +62,6 @@ export const Bill: React.FC<BillProps> = ({ setRefreshKey }) => {
         try {
             const res = await fetch(backendServer + `customerByPhone?phone=${phone}`);
             const exists = await res.json();
-            console.log("exists", exists)
             return exists;
         } catch (error) {
             console.error("Error checking phone", error);
